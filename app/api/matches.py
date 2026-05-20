@@ -29,17 +29,17 @@ def list_matches_endpoint(
     return list_matches(db=db, status=status)
 
 
-@router.get("/{match_id}", response_model=MatchRead | None)
-def get_match_endpoint(
-    match_id: int,
-    db: Session = Depends(get_db),
-):
-    return get_match(db=db, match_id=match_id)
-
-
 @router.get("/supply/{farmer_supply_id}", response_model=list[MatchRead])
 def list_matches_by_supply_endpoint(
     farmer_supply_id: int,
     db: Session = Depends(get_db),
 ):
     return list_matches_by_supply(db=db, farmer_supply_id=farmer_supply_id)
+
+
+@router.get("/{match_id}", response_model=MatchRead | None)
+def get_match_endpoint(
+    match_id: int,
+    db: Session = Depends(get_db),
+):
+    return get_match(db=db, match_id=match_id)
