@@ -29,6 +29,11 @@ from app.services.matches import (
     list_matches,
     list_matches_by_supply,
 )
+from app.services.matching import (
+    calculate_volume_fit_ratio,
+    has_timing_overlap,
+    score_supply_against_demand,
+)
 from app.services.products import create_product, get_product, list_products
 from app.services.tenders import (
     create_tender,
@@ -61,6 +66,9 @@ __all__ = [
     "get_match",
     "list_matches",
     "list_matches_by_supply",
+    "calculate_volume_fit_ratio",
+    "has_timing_overlap",
+    "score_supply_against_demand",
     "create_product",
     "get_product",
     "list_products",
