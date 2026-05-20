@@ -3,6 +3,7 @@ from app.api.buyer_demand import router as buyer_demand_router
 from app.api.counties import router as counties_router
 from app.api.farmers import router as farmers_router
 from app.api.farmer_supply import router as farmer_supply_router
+from app.api.match_generation import router as match_generation_router
 from app.api.matches import router as matches_router
 from app.api.products import router as products_router
 from app.api.tenders import router as tenders_router
@@ -13,6 +14,7 @@ __all__ = [
     "counties_router",
     "farmers_router",
     "farmer_supply_router",
+    "match_generation_router",
     "matches_router",
     "products_router",
     "tenders_router",
