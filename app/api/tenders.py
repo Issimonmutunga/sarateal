@@ -29,17 +29,17 @@ def list_tenders_endpoint(
     return list_tenders(db=db, status=status)
 
 
-@router.get("/{tender_id}", response_model=TenderRead | None)
-def get_tender_endpoint(
-    tender_id: int,
-    db: Session = Depends(get_db),
-):
-    return get_tender(db=db, tender_id=tender_id)
-
-
 @router.get("/county/{county}", response_model=list[TenderRead])
 def list_tenders_by_county_endpoint(
     county: str,
     db: Session = Depends(get_db),
 ):
     return list_tenders_by_county(db=db, county=county)
+
+
+@router.get("/{tender_id}", response_model=TenderRead | None)
+def get_tender_endpoint(
+    tender_id: int,
+    db: Session = Depends(get_db),
+):
+    return get_tender(db=db, tender_id=tender_id)
