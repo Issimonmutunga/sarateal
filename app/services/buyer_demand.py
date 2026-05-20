@@ -1,6 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BusinessRuleViolationError, ErrorDetail
+from app.core.exceptions import ErrorDetail
+from app.core.validators import (
+    collect_date_order_error,
+    collect_non_negative_number_error,
+    collect_positive_number_error,
+    raise_if_details,
+)
 from app.models.buyer_demand import BuyerDemand
 from app.schemas.buyer_demand import BuyerDemandCreate
 from app.services.buyers import get_buyer_or_raise
@@ -16,43 +22,33 @@ def validate_buyer_demand(
 
     details: list[ErrorDetail] = []
 
-    if demand_in.quantity_needed <= 0:
-        details.append(
-            ErrorDetail(
-                field="quantity_needed",
-                message="Demand quantity must be greater than zero.",
-                value=demand_in.quantity_needed,
-            )
-        )
+    collect_positive_number_error(
+        details=details,
+        value=demand_in.quantity_needed,
+        field="quantity_needed",
+    )
+    collect_date_order_error(
+        details=details,
+        start_date=demand_in.needed_from,
+        end_date=demand_in.needed_until,
+        start_field="needed_from",
+        end_field="needed_until",
+    )
+    collect_non_negative_number_error(
+        details=details,
+        value=demand_in.target_price_per_unit,
+        field="target_price_per_unit",
+    )
 
-    if demand_in.needed_until and demand_in.needed_until < demand_in.needed_from:
-        details.append(
-            ErrorDetail(
-                field="needed_until",
-                message="Needed until date cannot be earlier than needed from date.",
-                value=demand_in.needed_until,
-            )
-        )
-
-    if demand_in.target_price_per_unit is not None and demand_in.target_price_per_unit < 0:
-        details.append(
-            ErrorDetail(
-                field="target_price_per_unit",
-                message="Target price per unit cannot be negative.",
-                value=demand_in.target_price_per_unit,
-            )
-        )
-
-    if details:
-        raise BusinessRuleViolationError(
-            message="Buyer demand validation failed.",
-            details=details,
-            context={
-                "entity": "BuyerDemand",
-                "buyer_id": demand_in.buyer_id,
-                "product_id": demand_in.product_id,
-            },
-        )
+    raise_if_details(
+        details=details,
+        message="Buyer demand validation failed.",
+        entity="BuyerDemand",
+        context={
+            "buyer_id": demand_in.buyer_id,
+            "product_id": demand_in.product_id,
+        },
+    )
 
 
 def create_buyer_demand(
