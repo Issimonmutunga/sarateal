@@ -1,6 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BusinessRuleViolationError, ErrorDetail
+from app.core.exceptions import ErrorDetail
+from app.core.validators import (
+    collect_date_order_error,
+    collect_non_negative_number_error,
+    raise_if_details,
+    validate_url,
+)
 from app.models.tender import Tender
 from app.schemas.tender import TenderCreate
 from app.services.buyers import get_buyer_or_raise
@@ -19,44 +25,35 @@ def validate_tender(
     if tender_in.product_id is not None:
         get_product_or_raise(db=db, product_id=tender_in.product_id)
 
-    if tender_in.quantity is not None and tender_in.quantity < 0:
-        details.append(
-            ErrorDetail(
-                field="quantity",
-                message="Tender quantity cannot be negative.",
-                value=tender_in.quantity,
-            )
-        )
+    collect_non_negative_number_error(
+        details=details,
+        value=tender_in.quantity,
+        field="quantity",
+    )
+    collect_date_order_error(
+        details=details,
+        start_date=tender_in.opening_date,
+        end_date=tender_in.closing_date,
+        start_field="opening_date",
+        end_field="closing_date",
+    )
 
-    if tender_in.opening_date and tender_in.closing_date:
-        if tender_in.closing_date < tender_in.opening_date:
-            details.append(
-                ErrorDetail(
-                    field="closing_date",
-                    message="Closing date cannot be earlier than opening date.",
-                    value=tender_in.closing_date,
-                )
-            )
+    raise_if_details(
+        details=details,
+        message="Tender validation failed.",
+        entity="Tender",
+        context={
+            "title": tender_in.title,
+            "source_name": tender_in.source_name,
+        },
+    )
 
-    if tender_in.source_url and not tender_in.source_url.startswith(("http://", "https://")):
-        details.append(
-            ErrorDetail(
-                field="source_url",
-                message="Source URL must start with http:// or https://.",
-                value=tender_in.source_url,
-            )
-        )
-
-    if details:
-        raise BusinessRuleViolationError(
-            message="Tender validation failed.",
-            details=details,
-            context={
-                "entity": "Tender",
-                "title": tender_in.title,
-                "source_name": tender_in.source_name,
-            },
-        )
+    validate_url(
+        value=tender_in.source_url,
+        field="source_url",
+        entity="Tender",
+        required=False,
+    )
 
 
 def create_tender(
@@ -91,6 +88,23 @@ def get_tender(
     tender_id: int,
 ) -> Tender | None:
     return db.query(Tender).filter(Tender.id == tender_id).first()
+
+
+def get_tender_or_raise(
+    db: Session,
+    tender_id: int,
+) -> Tender:
+    tender = get_tender(db=db, tender_id=tender_id)
+
+    if not tender:
+        from app.core.exceptions import record_not_found_error
+
+        raise record_not_found_error(
+            entity="Tender",
+            identifier=tender_id,
+        )
+
+    return tender
 
 
 def list_tenders_by_county(
