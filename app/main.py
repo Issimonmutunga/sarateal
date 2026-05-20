@@ -6,6 +6,7 @@ from app.api import (
     counties_router,
     farmers_router,
     farmer_supply_router,
+    match_generation_router,
     matches_router,
     products_router,
     tenders_router,
@@ -45,3 +46,4 @@ app.include_router(farmer_supply_router)
 app.include_router(buyer_demand_router)
 app.include_router(tenders_router)
 app.include_router(matches_router)
+app.include_router(match_generation_router)
