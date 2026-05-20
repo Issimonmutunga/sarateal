@@ -29,17 +29,17 @@ def list_farmer_supply_endpoint(
     return list_farmer_supply(db=db, status=status)
 
 
-@router.get("/{supply_id}", response_model=FarmerSupplyRead | None)
-def get_farmer_supply_endpoint(
-    supply_id: int,
-    db: Session = Depends(get_db),
-):
-    return get_farmer_supply(db=db, supply_id=supply_id)
-
-
 @router.get("/farmer/{farmer_id}", response_model=list[FarmerSupplyRead])
 def list_supply_by_farmer_endpoint(
     farmer_id: int,
     db: Session = Depends(get_db),
 ):
     return list_supply_by_farmer(db=db, farmer_id=farmer_id)
+
+
+@router.get("/{supply_id}", response_model=FarmerSupplyRead | None)
+def get_farmer_supply_endpoint(
+    supply_id: int,
+    db: Session = Depends(get_db),
+):
+    return get_farmer_supply(db=db, supply_id=supply_id)
