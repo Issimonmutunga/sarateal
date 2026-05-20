@@ -1,6 +1,11 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BusinessRuleViolationError, ErrorDetail, record_not_found_error
+from app.core.exceptions import ErrorDetail, record_not_found_error
+from app.core.validators import (
+    collect_non_negative_number_error,
+    raise_if_details,
+    validate_score_range,
+)
 from app.models.match import Match
 from app.schemas.match import MatchCreate
 
@@ -26,35 +31,30 @@ def validate_match(match_in: MatchCreate) -> None:
             )
         )
 
-    if match_in.opportunity_score < 0 or match_in.opportunity_score > 100:
-        details.append(
-            ErrorDetail(
-                field="opportunity_score",
-                message="Opportunity score must be between 0 and 100.",
-                value=match_in.opportunity_score,
-            )
-        )
+    collect_non_negative_number_error(
+        details=details,
+        value=match_in.estimated_transport_cost,
+        field="estimated_transport_cost",
+    )
 
-    if match_in.estimated_transport_cost is not None and match_in.estimated_transport_cost < 0:
-        details.append(
-            ErrorDetail(
-                field="estimated_transport_cost",
-                message="Estimated transport cost cannot be negative.",
-                value=match_in.estimated_transport_cost,
-            )
-        )
+    raise_if_details(
+        details=details,
+        message="Match validation failed.",
+        entity="Match",
+        context={
+            "farmer_supply_id": match_in.farmer_supply_id,
+            "buyer_demand_id": match_in.buyer_demand_id,
+            "tender_id": match_in.tender_id,
+        },
+    )
 
-    if details:
-        raise BusinessRuleViolationError(
-            message="Match validation failed.",
-            details=details,
-            context={
-                "entity": "Match",
-                "farmer_supply_id": match_in.farmer_supply_id,
-                "buyer_demand_id": match_in.buyer_demand_id,
-                "tender_id": match_in.tender_id,
-            },
-        )
+    validate_score_range(
+        value=match_in.opportunity_score,
+        field="opportunity_score",
+        entity="Match",
+        minimum=0.0,
+        maximum=100.0,
+    )
 
 
 def create_match(
