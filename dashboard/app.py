@@ -9,6 +9,7 @@ from app.models.farmer import Farmer
 from app.models.farmer_supply import FarmerSupply
 from app.models.match import Match
 from app.models.tender import Tender
+from app.services.match_generation import generate_supply_demand_matches
 
 
 st.set_page_config(
@@ -46,6 +47,10 @@ def main() -> None:
     try:
         st.title("Sarateal")
         st.caption("Kenya farmer market access radar")
+
+        if st.button("Generate supply-demand matches"):
+            matches = generate_supply_demand_matches(db=db)
+            st.success(f"Generated {len(matches)} new match records.")
 
         col1, col2, col3, col4 = st.columns(4)
 
