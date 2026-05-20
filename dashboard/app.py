@@ -1,4 +1,18 @@
 from datetime import date
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+if "app" in sys.modules:
+    loaded_app = sys.modules["app"]
+    loaded_app_file = getattr(loaded_app, "__file__", "")
+
+    if loaded_app_file and Path(loaded_app_file).resolve() == Path(__file__).resolve():
+        del sys.modules["app"]
 
 import pandas as pd
 import streamlit as st
