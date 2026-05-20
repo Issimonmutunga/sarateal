@@ -1,6 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BusinessRuleViolationError, ErrorDetail
+from app.core.exceptions import ErrorDetail
+from app.core.validators import (
+    collect_date_order_error,
+    collect_non_negative_number_error,
+    collect_positive_number_error,
+    raise_if_details,
+)
 from app.models.farmer_supply import FarmerSupply
 from app.schemas.farmer_supply import FarmerSupplyCreate
 from app.services.farmers import get_farmer_or_raise
@@ -16,43 +22,33 @@ def validate_farmer_supply(
 
     details: list[ErrorDetail] = []
 
-    if supply_in.quantity <= 0:
-        details.append(
-            ErrorDetail(
-                field="quantity",
-                message="Supply quantity must be greater than zero.",
-                value=supply_in.quantity,
-            )
-        )
+    collect_positive_number_error(
+        details=details,
+        value=supply_in.quantity,
+        field="quantity",
+    )
+    collect_date_order_error(
+        details=details,
+        start_date=supply_in.available_from,
+        end_date=supply_in.available_until,
+        start_field="available_from",
+        end_field="available_until",
+    )
+    collect_non_negative_number_error(
+        details=details,
+        value=supply_in.expected_price_per_unit,
+        field="expected_price_per_unit",
+    )
 
-    if supply_in.available_until and supply_in.available_until < supply_in.available_from:
-        details.append(
-            ErrorDetail(
-                field="available_until",
-                message="Available until date cannot be earlier than available from date.",
-                value=supply_in.available_until,
-            )
-        )
-
-    if supply_in.expected_price_per_unit is not None and supply_in.expected_price_per_unit < 0:
-        details.append(
-            ErrorDetail(
-                field="expected_price_per_unit",
-                message="Expected price per unit cannot be negative.",
-                value=supply_in.expected_price_per_unit,
-            )
-        )
-
-    if details:
-        raise BusinessRuleViolationError(
-            message="Farmer supply validation failed.",
-            details=details,
-            context={
-                "entity": "FarmerSupply",
-                "farmer_id": supply_in.farmer_id,
-                "product_id": supply_in.product_id,
-            },
-        )
+    raise_if_details(
+        details=details,
+        message="Farmer supply validation failed.",
+        entity="FarmerSupply",
+        context={
+            "farmer_id": supply_in.farmer_id,
+            "product_id": supply_in.product_id,
+        },
+    )
 
 
 def create_farmer_supply(
