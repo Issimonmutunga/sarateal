@@ -1,20 +1,31 @@
-from app.services.buyers import create_buyer, get_buyer, list_buyers
+from app.services.buyers import (
+    create_buyer,
+    get_buyer,
+    get_buyer_by_email,
+    get_buyer_by_name,
+    get_buyer_or_raise,
+    list_buyers,
+)
 from app.services.buyer_demand import (
     create_buyer_demand,
     get_buyer_demand,
     list_buyer_demand,
     list_demand_by_buyer,
+    validate_buyer_demand,
 )
 from app.services.counties import (
     create_county,
     get_county,
+    get_county_by_code,
     get_county_by_name,
+    get_county_or_raise,
     list_counties,
 )
 from app.services.farmers import (
     create_farmer,
     get_farmer,
     get_farmer_by_phone,
+    get_farmer_or_raise,
     list_farmers,
 )
 from app.services.farmer_supply import (
@@ -22,60 +33,83 @@ from app.services.farmer_supply import (
     get_farmer_supply,
     list_farmer_supply,
     list_supply_by_farmer,
+    validate_farmer_supply,
 )
 from app.services.match_generation import generate_supply_demand_matches
 from app.services.matches import (
     create_match,
     get_match,
+    get_match_or_raise,
     list_matches,
     list_matches_by_supply,
+    validate_match,
 )
 from app.services.matching import (
     calculate_volume_fit_ratio,
     has_timing_overlap,
     score_supply_against_demand,
 )
-from app.services.products import create_product, get_product, list_products
+from app.services.products import (
+    create_product,
+    get_product,
+    get_product_by_name,
+    get_product_or_raise,
+    list_products,
+)
 from app.services.tenders import (
     create_tender,
     get_tender,
     list_tenders,
     list_tenders_by_county,
+    validate_tender,
 )
 
 __all__ = [
     "create_buyer",
     "get_buyer",
+    "get_buyer_by_email",
+    "get_buyer_by_name",
+    "get_buyer_or_raise",
     "list_buyers",
     "create_buyer_demand",
     "get_buyer_demand",
     "list_buyer_demand",
     "list_demand_by_buyer",
+    "validate_buyer_demand",
     "create_county",
     "get_county",
+    "get_county_by_code",
     "get_county_by_name",
+    "get_county_or_raise",
     "list_counties",
     "create_farmer",
     "get_farmer",
     "get_farmer_by_phone",
+    "get_farmer_or_raise",
     "list_farmers",
     "create_farmer_supply",
     "get_farmer_supply",
     "list_farmer_supply",
     "list_supply_by_farmer",
+    "validate_farmer_supply",
     "generate_supply_demand_matches",
     "create_match",
     "get_match",
+    "get_match_or_raise",
     "list_matches",
     "list_matches_by_supply",
+    "validate_match",
     "calculate_volume_fit_ratio",
     "has_timing_overlap",
     "score_supply_against_demand",
     "create_product",
     "get_product",
+    "get_product_by_name",
+    "get_product_or_raise",
     "list_products",
     "create_tender",
     "get_tender",
     "list_tenders",
     "list_tenders_by_county",
+    "validate_tender",
 ]
