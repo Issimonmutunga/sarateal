@@ -17,6 +17,7 @@ if "app" in sys.modules:
 import pandas as pd
 import streamlit as st
 
+from app.core.exceptions import SaratealError
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 from app.models.buyer import Buyer
@@ -44,6 +45,27 @@ st.set_page_config(
     page_icon="🌱",
     layout="wide",
 )
+
+
+def show_error(error: Exception) -> None:
+    if isinstance(error, SaratealError):
+        st.error(error.message)
+
+        for detail in error.details:
+            field = detail.field or "general"
+            value_text = f" Value: {detail.value}" if detail.value is not None else ""
+            st.warning(f"{field}: {detail.message}{value_text}")
+
+        if error.context:
+            with st.expander("Error context"):
+                st.json(error.context)
+
+        return
+
+    st.error("An unexpected error occurred.")
+    with st.expander("Technical detail"):
+        st.write(error.__class__.__name__)
+        st.write(str(error))
 
 
 def count_rows(db, model) -> int:
@@ -101,18 +123,21 @@ def render_farmer_form(db) -> None:
                 st.error("Full name, phone number, and county are required.")
                 return
 
-            farmer_in = FarmerCreate(
-                full_name=full_name,
-                phone_number=phone_number,
-                county=county,
-                sub_county=sub_county or None,
-                ward=ward or None,
-                farmer_group=farmer_group or None,
-                is_verified=is_verified,
-            )
+            try:
+                farmer_in = FarmerCreate(
+                    full_name=full_name,
+                    phone_number=phone_number,
+                    county=county,
+                    sub_county=sub_county or None,
+                    ward=ward or None,
+                    farmer_group=farmer_group or None,
+                    is_verified=is_verified,
+                )
 
-            create_farmer(db=db, farmer_in=farmer_in)
-            st.success("Farmer registered successfully.")
+                create_farmer(db=db, farmer_in=farmer_in)
+                st.success("Farmer registered successfully.")
+            except Exception as error:
+                show_error(error)
 
 
 def render_buyer_form(db) -> None:
@@ -148,20 +173,23 @@ def render_buyer_form(db) -> None:
                 st.error("Buyer name, buyer type, and county are required.")
                 return
 
-            buyer_in = BuyerCreate(
-                name=name,
-                buyer_type=buyer_type,
-                contact_person=contact_person or None,
-                phone_number=phone_number or None,
-                email=email or None,
-                county=county,
-                sub_county=sub_county or None,
-                ward=ward or None,
-                is_verified=is_verified,
-            )
+            try:
+                buyer_in = BuyerCreate(
+                    name=name,
+                    buyer_type=buyer_type,
+                    contact_person=contact_person or None,
+                    phone_number=phone_number or None,
+                    email=email or None,
+                    county=county,
+                    sub_county=sub_county or None,
+                    ward=ward or None,
+                    is_verified=is_verified,
+                )
 
-            create_buyer(db=db, buyer_in=buyer_in)
-            st.success("Buyer registered successfully.")
+                create_buyer(db=db, buyer_in=buyer_in)
+                st.success("Buyer registered successfully.")
+            except Exception as error:
+                show_error(error)
 
 
 def render_supply_form(db) -> None:
@@ -200,21 +228,24 @@ def render_supply_form(db) -> None:
                 st.error("Quantity and county are required.")
                 return
 
-            supply_in = FarmerSupplyCreate(
-                farmer_id=farmer_options[farmer_label],
-                product_id=product_options[product_label],
-                quantity=quantity,
-                unit=unit,
-                available_from=available_from,
-                available_until=available_until,
-                county=county,
-                sub_county=sub_county or None,
-                ward=ward or None,
-                expected_price_per_unit=expected_price_per_unit or None,
-            )
+            try:
+                supply_in = FarmerSupplyCreate(
+                    farmer_id=farmer_options[farmer_label],
+                    product_id=product_options[product_label],
+                    quantity=quantity,
+                    unit=unit,
+                    available_from=available_from,
+                    available_until=available_until,
+                    county=county,
+                    sub_county=sub_county or None,
+                    ward=ward or None,
+                    expected_price_per_unit=expected_price_per_unit or None,
+                )
 
-            create_farmer_supply(db=db, supply_in=supply_in)
-            st.success("Supply listing created successfully.")
+                create_farmer_supply(db=db, supply_in=supply_in)
+                st.success("Supply listing created successfully.")
+            except Exception as error:
+                show_error(error)
 
 
 def render_demand_form(db) -> None:
@@ -254,22 +285,25 @@ def render_demand_form(db) -> None:
                 st.error("Quantity needed and county are required.")
                 return
 
-            demand_in = BuyerDemandCreate(
-                buyer_id=buyer_options[buyer_label],
-                product_id=product_options[product_label],
-                quantity_needed=quantity_needed,
-                unit=unit,
-                needed_from=needed_from,
-                needed_until=needed_until,
-                county=county,
-                sub_county=sub_county or None,
-                ward=ward or None,
-                target_price_per_unit=target_price_per_unit or None,
-                requirements=requirements or None,
-            )
+            try:
+                demand_in = BuyerDemandCreate(
+                    buyer_id=buyer_options[buyer_label],
+                    product_id=product_options[product_label],
+                    quantity_needed=quantity_needed,
+                    unit=unit,
+                    needed_from=needed_from,
+                    needed_until=needed_until,
+                    county=county,
+                    sub_county=sub_county or None,
+                    ward=ward or None,
+                    target_price_per_unit=target_price_per_unit or None,
+                    requirements=requirements or None,
+                )
 
-            create_buyer_demand(db=db, demand_in=demand_in)
-            st.success("Demand listing created successfully.")
+                create_buyer_demand(db=db, demand_in=demand_in)
+                st.success("Demand listing created successfully.")
+            except Exception as error:
+                show_error(error)
 
 
 def render_tender_form(db) -> None:
@@ -302,22 +336,25 @@ def render_tender_form(db) -> None:
                 st.error("Tender title and source name are required.")
                 return
 
-            tender_in = TenderCreate(
-                title=title,
-                buyer_id=buyer_options[buyer_label],
-                product_id=product_options[product_label],
-                source_name=source_name,
-                source_url=source_url or None,
-                county=county or None,
-                quantity=quantity or None,
-                unit=unit or None,
-                opening_date=opening_date,
-                closing_date=closing_date,
-                requirements=requirements or None,
-            )
+            try:
+                tender_in = TenderCreate(
+                    title=title,
+                    buyer_id=buyer_options[buyer_label],
+                    product_id=product_options[product_label],
+                    source_name=source_name,
+                    source_url=source_url or None,
+                    county=county or None,
+                    quantity=quantity or None,
+                    unit=unit or None,
+                    opening_date=opening_date,
+                    closing_date=closing_date,
+                    requirements=requirements or None,
+                )
 
-            create_tender(db=db, tender_in=tender_in)
-            st.success("Tender saved successfully.")
+                create_tender(db=db, tender_in=tender_in)
+                st.success("Tender saved successfully.")
+            except Exception as error:
+                show_error(error)
 
 
 def render_data_view(db) -> None:
@@ -361,8 +398,11 @@ def main() -> None:
         st.caption("Kenya farmer market access radar")
 
         if st.button("Generate supply-demand matches"):
-            matches = generate_supply_demand_matches(db=db)
-            st.success(f"Generated {len(matches)} new match records.")
+            try:
+                matches = generate_supply_demand_matches(db=db)
+                st.success(f"Generated {len(matches)} new match records.")
+            except Exception as error:
+                show_error(error)
 
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Farmers", count_rows(db, Farmer))
