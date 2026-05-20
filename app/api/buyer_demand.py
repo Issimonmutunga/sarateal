@@ -29,17 +29,17 @@ def list_buyer_demand_endpoint(
     return list_buyer_demand(db=db, status=status)
 
 
-@router.get("/{demand_id}", response_model=BuyerDemandRead | None)
-def get_buyer_demand_endpoint(
-    demand_id: int,
-    db: Session = Depends(get_db),
-):
-    return get_buyer_demand(db=db, demand_id=demand_id)
-
-
 @router.get("/buyer/{buyer_id}", response_model=list[BuyerDemandRead])
 def list_demand_by_buyer_endpoint(
     buyer_id: int,
     db: Session = Depends(get_db),
 ):
     return list_demand_by_buyer(db=db, buyer_id=buyer_id)
+
+
+@router.get("/{demand_id}", response_model=BuyerDemandRead | None)
+def get_buyer_demand_endpoint(
+    demand_id: int,
+    db: Session = Depends(get_db),
+):
+    return get_buyer_demand(db=db, demand_id=demand_id)
