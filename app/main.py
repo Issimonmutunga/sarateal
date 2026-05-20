@@ -13,6 +13,7 @@ from app.api import (
     tenders_router,
 )
 from app.core.config import get_settings
+from app.core.exception_handlers import register_exception_handlers
 from app.db.init_db import init_db
 
 
@@ -22,6 +23,8 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
 )
+
+register_exception_handlers(app)
 
 
 @app.on_event("startup")
