@@ -6,6 +6,7 @@ from app.api import (
     counties_router,
     farmers_router,
     farmer_supply_router,
+    health_router,
     match_generation_router,
     matches_router,
     products_router,
@@ -28,16 +29,7 @@ def on_startup() -> None:
     init_db()
 
 
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    return {
-        "status": "ok",
-        "app": settings.app_name,
-        "version": settings.app_version,
-        "environment": settings.environment,
-    }
-
-
+app.include_router(health_router)
 app.include_router(counties_router)
 app.include_router(products_router)
 app.include_router(farmers_router)
