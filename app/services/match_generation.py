@@ -8,6 +8,22 @@ from app.models.match import Match
 from app.services.matching import score_supply_against_demand
 
 
+def match_exists(
+    db: Session,
+    farmer_supply_id: int,
+    buyer_demand_id: int,
+) -> bool:
+    return (
+        db.query(Match)
+        .filter(
+            Match.farmer_supply_id == farmer_supply_id,
+            Match.buyer_demand_id == buyer_demand_id,
+        )
+        .first()
+        is not None
+    )
+
+
 def generate_supply_demand_matches(db: Session) -> list[Match]:
     supplies = (
         db.query(FarmerSupply)
@@ -30,6 +46,13 @@ def generate_supply_demand_matches(db: Session) -> list[Match]:
             if supply.product_id != demand.product_id:
                 continue
 
+            if match_exists(
+                db=db,
+                farmer_supply_id=supply.id,
+                buyer_demand_id=demand.id,
+            ):
+                continue
+
             buyer = db.query(Buyer).filter(Buyer.id == demand.buyer_id).first()
 
             score, label = score_supply_against_demand(
@@ -44,7 +67,10 @@ def generate_supply_demand_matches(db: Session) -> list[Match]:
                 buyer_demand_id=demand.id,
                 opportunity_score=score,
                 risk_level="unknown",
-                recommendation=f"{label} opportunity based on product, location, volume, and timing fit.",
+                recommendation=(
+                    f"{label} opportunity based on product, location, "
+                    "volume, and timing fit."
+                ),
                 status="suggested",
             )
 
