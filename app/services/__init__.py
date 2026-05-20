@@ -23,6 +23,7 @@ from app.services.farmer_supply import (
     list_farmer_supply,
     list_supply_by_farmer,
 )
+from app.services.match_generation import generate_supply_demand_matches
 from app.services.matches import (
     create_match,
     get_match,
@@ -62,6 +63,7 @@ __all__ = [
     "get_farmer_supply",
     "list_farmer_supply",
     "list_supply_by_farmer",
+    "generate_supply_demand_matches",
     "create_match",
     "get_match",
     "list_matches",
