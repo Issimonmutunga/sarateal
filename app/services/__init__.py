@@ -59,6 +59,7 @@ from app.services.products import (
 from app.services.tenders import (
     create_tender,
     get_tender,
+    get_tender_or_raise,
     list_tenders,
     list_tenders_by_county,
     validate_tender,
@@ -109,6 +110,7 @@ __all__ = [
     "list_products",
     "create_tender",
     "get_tender",
+    "get_tender_or_raise",
     "list_tenders",
     "list_tenders_by_county",
     "validate_tender",
