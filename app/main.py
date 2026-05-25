@@ -10,6 +10,7 @@ from app.api import (
     markets_router,
     match_generation_router,
     matches_router,
+    prices_router,
     products_router,
     tenders_router,
 )
@@ -37,6 +38,7 @@ app.include_router(health_router)
 app.include_router(counties_router)
 app.include_router(products_router)
 app.include_router(markets_router)
+app.include_router(prices_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
