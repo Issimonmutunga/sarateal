@@ -7,6 +7,7 @@ from app.api import (
     farmers_router,
     farmer_supply_router,
     health_router,
+    markets_router,
     match_generation_router,
     matches_router,
     products_router,
@@ -35,6 +36,7 @@ def on_startup() -> None:
 app.include_router(health_router)
 app.include_router(counties_router)
 app.include_router(products_router)
+app.include_router(markets_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
