@@ -1,7 +1,10 @@
 from fastapi.testclient import TestClient
 
+from app.db.init_db import init_db
 from app.main import app
 
+
+init_db()
 
 client = TestClient(app)
 
@@ -10,6 +13,7 @@ def test_core_list_routes_return_success():
     routes = [
         "/counties",
         "/products",
+        "/markets",
         "/farmers",
         "/buyers",
         "/farmer-supply",
