@@ -14,6 +14,7 @@ def test_core_list_routes_return_success():
         "/counties",
         "/products",
         "/markets",
+        "/prices",
         "/farmers",
         "/buyers",
         "/farmer-supply",
