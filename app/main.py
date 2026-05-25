@@ -14,6 +14,7 @@ from app.api import (
     prices_router,
     products_router,
     tenders_router,
+    weather_router,
 )
 from app.core.config import get_settings
 from app.core.exception_handlers import register_exception_handlers
@@ -41,6 +42,7 @@ app.include_router(products_router)
 app.include_router(markets_router)
 app.include_router(prices_router)
 app.include_router(price_ingestion_router)
+app.include_router(weather_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
