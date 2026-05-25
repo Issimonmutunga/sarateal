@@ -65,6 +65,22 @@ def test_generate_supply_demand_matches_endpoint_returns_success():
     assert isinstance(payload, list)
 
 
+def test_price_csv_ingestion_endpoint_returns_success():
+    response = client.post(
+        "/price-ingestion/csv",
+        json={
+            "file_path": "data/raw/prices/sample_prices.csv",
+        },
+    )
+
+    assert response.status_code == 200
+
+    payload = response.json()
+
+    assert "prices_created" in payload
+    assert isinstance(payload["prices_created"], int)
+
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
