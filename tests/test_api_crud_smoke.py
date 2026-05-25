@@ -81,6 +81,32 @@ def test_price_csv_ingestion_endpoint_returns_success():
     assert isinstance(payload["prices_created"], int)
 
 
+def test_weather_forecast_endpoint_is_registered(monkeypatch):
+    def fake_get_weather_risk_forecast(
+        latitude: float,
+        longitude: float,
+        forecast_days: int = 7,
+    ):
+        return []
+
+    monkeypatch.setattr(
+        "app.api.weather.get_weather_risk_forecast",
+        fake_get_weather_risk_forecast,
+    )
+
+    response = client.get(
+        "/weather/forecast",
+        params={
+            "latitude": -1.286389,
+            "longitude": 36.817223,
+            "forecast_days": 1,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
