@@ -7,6 +7,7 @@ from app.models.market import Market
 from app.models.match import Match
 from app.models.price import Price
 from app.models.product import Product
+from app.models.stored_location import StoredLocation
 from app.models.tender import Tender
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     "Match",
     "Price",
     "Product",
+    "StoredLocation",
     "Tender",
 ]
