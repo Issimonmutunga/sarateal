@@ -106,9 +106,3 @@ Run:
 ```bash
 pytest
 ````
-
-Commit only after tests pass:
-
-```text
-Document deployment start command
-```
