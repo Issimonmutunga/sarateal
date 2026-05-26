@@ -2,8 +2,10 @@ from app.data_sources.locations.nominatim import GeocodedLocation
 from app.services.stored_locations import (
     create_stored_location,
     get_stored_location,
+    get_stored_location_by_id,
     list_stored_locations,
     normalize_location_name,
+    set_stored_location_verification,
 )
 
 
@@ -78,6 +80,71 @@ def test_get_stored_location_returns_none_for_unknown_location(db_session):
     )
 
     assert stored_location is None
+
+
+def test_get_stored_location_by_id_returns_matching_location(db_session):
+    created_location = create_stored_location(
+        db=db_session,
+        location_name="Wakulima Market Nairobi",
+        geocoded_location=GeocodedLocation(
+            display_name="Wakulima Market, Nairobi, Kenya",
+            latitude=-1.28333,
+            longitude=36.83333,
+        ),
+        country="Kenya",
+    )
+
+    stored_location = get_stored_location_by_id(
+        db=db_session,
+        stored_location_id=created_location.id,
+    )
+
+    assert stored_location is not None
+    assert stored_location.id == created_location.id
+    assert stored_location.location_name == "Wakulima Market Nairobi"
+
+
+def test_get_stored_location_by_id_returns_none_for_unknown_id(db_session):
+    stored_location = get_stored_location_by_id(
+        db=db_session,
+        stored_location_id=999999,
+    )
+
+    assert stored_location is None
+
+
+def test_set_stored_location_verification_updates_verified_status(db_session):
+    stored_location = create_stored_location(
+        db=db_session,
+        location_name="Verified Market",
+        geocoded_location=GeocodedLocation(
+            display_name="Verified Market, Kenya",
+            latitude=-1.1,
+            longitude=36.1,
+        ),
+        country="Kenya",
+        is_verified=False,
+    )
+
+    updated_location = set_stored_location_verification(
+        db=db_session,
+        stored_location_id=stored_location.id,
+        is_verified=True,
+    )
+
+    assert updated_location is not None
+    assert updated_location.id == stored_location.id
+    assert updated_location.is_verified is True
+
+
+def test_set_stored_location_verification_returns_none_for_unknown_id(db_session):
+    updated_location = set_stored_location_verification(
+        db=db_session,
+        stored_location_id=999999,
+        is_verified=True,
+    )
+
+    assert updated_location is None
 
 
 def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session):
