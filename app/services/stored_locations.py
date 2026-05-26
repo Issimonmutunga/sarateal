@@ -49,6 +49,13 @@ def get_stored_location(
     return db.scalar(statement)
 
 
+def get_stored_location_by_id(
+    db: Session,
+    stored_location_id: int,
+) -> StoredLocation | None:
+    return db.get(StoredLocation, stored_location_id)
+
+
 def create_stored_location(
     db: Session,
     location_name: str,
@@ -66,6 +73,28 @@ def create_stored_location(
         source_display_name=geocoded_location.display_name,
         is_verified=is_verified,
     )
+
+    db.add(stored_location)
+    db.commit()
+    db.refresh(stored_location)
+
+    return stored_location
+
+
+def set_stored_location_verification(
+    db: Session,
+    stored_location_id: int,
+    is_verified: bool,
+) -> StoredLocation | None:
+    stored_location = get_stored_location_by_id(
+        db=db,
+        stored_location_id=stored_location_id,
+    )
+
+    if stored_location is None:
+        return None
+
+    stored_location.is_verified = is_verified
 
     db.add(stored_location)
     db.commit()
