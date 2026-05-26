@@ -4,6 +4,7 @@ from app.api import (
     buyers_router,
     buyer_demand_router,
     counties_router,
+    county_weather_router,
     farmers_router,
     farmer_supply_router,
     health_router,
@@ -45,6 +46,7 @@ app.include_router(prices_router)
 app.include_router(price_ingestion_router)
 app.include_router(weather_router)
 app.include_router(market_weather_router)
+app.include_router(county_weather_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
