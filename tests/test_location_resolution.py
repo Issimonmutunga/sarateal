@@ -1,5 +1,6 @@
 from app.data_sources.locations.nominatim import GeocodedLocation
 from app.services.location_resolution import (
+    resolve_county_coordinate,
     resolve_market_coordinate,
 )
 from app.services.stored_locations import create_stored_location
@@ -120,6 +121,120 @@ def test_resolve_market_coordinate_returns_none_when_location_unknown(db_session
         db=db_session,
         market_name="Unknown Market",
         county="Unknown",
+    )
+
+    assert resolved_coordinate is None
+
+
+def test_resolve_county_coordinate_returns_none_for_blank_county(db_session):
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="   ",
+    )
+
+    assert resolved_coordinate is None
+
+
+def test_resolve_county_coordinate_prefers_verified_cache(db_session):
+    create_stored_location(
+        db=db_session,
+        location_name="Nairobi",
+        geocoded_location=GeocodedLocation(
+            display_name="Verified Nairobi County, Kenya",
+            latitude=-1.30,
+            longitude=36.82,
+        ),
+        country="Kenya",
+        is_verified=True,
+    )
+
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="Nairobi",
+    )
+
+    assert resolved_coordinate is not None
+    assert resolved_coordinate.name == "Nairobi"
+    assert resolved_coordinate.latitude == -1.30
+    assert resolved_coordinate.longitude == 36.82
+    assert resolved_coordinate.location_type == "verified_cached_county"
+    assert resolved_coordinate.source_name == "OpenStreetMap Nominatim"
+    assert resolved_coordinate.is_verified is True
+
+
+def test_resolve_county_coordinate_uses_static_registry_when_cache_is_unverified(
+    db_session,
+):
+    create_stored_location(
+        db=db_session,
+        location_name="Nairobi",
+        geocoded_location=GeocodedLocation(
+            display_name="Unverified Nairobi County, Kenya",
+            latitude=-1.30,
+            longitude=36.82,
+        ),
+        country="Kenya",
+        is_verified=False,
+    )
+
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="Nairobi",
+    )
+
+    assert resolved_coordinate is not None
+    assert resolved_coordinate.name == "Nairobi"
+    assert resolved_coordinate.location_type == "county"
+    assert resolved_coordinate.source_name == "Static Kenya county coordinate registry"
+    assert resolved_coordinate.is_verified is True
+
+
+def test_resolve_county_coordinate_uses_static_registry_when_no_cache(db_session):
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="Kisumu",
+    )
+
+    assert resolved_coordinate is not None
+    assert resolved_coordinate.name == "Kisumu"
+    assert resolved_coordinate.country == "Kenya"
+    assert resolved_coordinate.location_type == "county"
+    assert resolved_coordinate.source_name == "Static Kenya county coordinate registry"
+    assert resolved_coordinate.is_verified is True
+
+
+def test_resolve_county_coordinate_uses_unverified_cache_when_static_missing(
+    db_session,
+):
+    create_stored_location(
+        db=db_session,
+        location_name="New County",
+        geocoded_location=GeocodedLocation(
+            display_name="New County, Kenya",
+            latitude=-0.4,
+            longitude=37.2,
+        ),
+        country="Kenya",
+        is_verified=False,
+    )
+
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="New County",
+    )
+
+    assert resolved_coordinate is not None
+    assert resolved_coordinate.name == "New County"
+    assert resolved_coordinate.latitude == -0.4
+    assert resolved_coordinate.longitude == 37.2
+    assert resolved_coordinate.location_type == "cached_county"
+    assert resolved_coordinate.is_verified is False
+
+
+def test_resolve_county_coordinate_returns_none_when_location_unknown(db_session):
+    resolved_coordinate = resolve_county_coordinate(
+        db=db_session,
+        county="Unknown County",
     )
 
     assert resolved_coordinate is None

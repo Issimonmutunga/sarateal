@@ -4,6 +4,10 @@ from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
 
+from app.data_sources.locations.kenya_county_coordinates import (
+    CountyCoordinate,
+    find_county_coordinate,
+)
 from app.data_sources.locations.kenya_market_coordinates import (
     LocationCoordinate,
     find_market_coordinate,
@@ -53,6 +57,21 @@ def market_coordinate_to_resolved_coordinate(
     )
 
 
+def county_coordinate_to_resolved_coordinate(
+    county_coordinate: CountyCoordinate,
+    country: str = "Kenya",
+) -> ResolvedLocationCoordinate:
+    return ResolvedLocationCoordinate(
+        name=county_coordinate.county,
+        country=country,
+        latitude=county_coordinate.latitude,
+        longitude=county_coordinate.longitude,
+        location_type=county_coordinate.location_type,
+        source_name="Static Kenya county coordinate registry",
+        is_verified=True,
+    )
+
+
 def resolve_market_coordinate(
     db: Session,
     market_name: str,
@@ -96,6 +115,50 @@ def resolve_market_coordinate(
         return stored_location_to_resolved_coordinate(
             stored_location=stored_location,
             location_type="cached_market",
+        )
+
+    return None
+
+
+def resolve_county_coordinate(
+    db: Session,
+    county: str,
+    country: str = "Kenya",
+    prefer_verified_cache: bool = True,
+) -> ResolvedLocationCoordinate | None:
+    clean_county = county.strip()
+
+    if not clean_county:
+        return None
+
+    stored_location = get_stored_location(
+        db=db,
+        location_name=clean_county,
+        country=country,
+    )
+
+    if (
+        prefer_verified_cache
+        and stored_location is not None
+        and stored_location.is_verified
+    ):
+        return stored_location_to_resolved_coordinate(
+            stored_location=stored_location,
+            location_type="verified_cached_county",
+        )
+
+    county_coordinate = find_county_coordinate(clean_county)
+
+    if county_coordinate is not None:
+        return county_coordinate_to_resolved_coordinate(
+            county_coordinate=county_coordinate,
+            country=country,
+        )
+
+    if stored_location is not None:
+        return stored_location_to_resolved_coordinate(
+            stored_location=stored_location,
+            location_type="cached_county",
         )
 
     return None
