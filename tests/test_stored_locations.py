@@ -2,6 +2,7 @@ from app.data_sources.locations.nominatim import GeocodedLocation
 from app.services.stored_locations import (
     create_stored_location,
     get_stored_location,
+    list_stored_locations,
     normalize_location_name,
 )
 
@@ -77,3 +78,98 @@ def test_get_stored_location_returns_none_for_unknown_location(db_session):
     )
 
     assert stored_location is None
+
+
+def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session):
+    create_stored_location(
+        db=db_session,
+        location_name="Wakulima Market Nairobi",
+        geocoded_location=GeocodedLocation(
+            display_name="Wakulima Market, Nairobi, Kenya",
+            latitude=-1.28333,
+            longitude=36.83333,
+        ),
+        country="Kenya",
+    )
+    create_stored_location(
+        db=db_session,
+        location_name="Kibuye Market Kisumu",
+        geocoded_location=GeocodedLocation(
+            display_name="Kibuye Market, Kisumu, Kenya",
+            latitude=-0.09170,
+            longitude=34.76796,
+        ),
+        country="Kenya",
+    )
+
+    locations = list_stored_locations(db=db_session)
+
+    assert [location.location_name for location in locations] == [
+        "Kibuye Market Kisumu",
+        "Wakulima Market Nairobi",
+    ]
+
+
+def test_list_stored_locations_can_filter_by_country(db_session):
+    create_stored_location(
+        db=db_session,
+        location_name="Wakulima Market Nairobi",
+        geocoded_location=GeocodedLocation(
+            display_name="Wakulima Market, Nairobi, Kenya",
+            latitude=-1.28333,
+            longitude=36.83333,
+        ),
+        country="Kenya",
+    )
+    create_stored_location(
+        db=db_session,
+        location_name="Kampala Central Market",
+        geocoded_location=GeocodedLocation(
+            display_name="Kampala Central Market, Uganda",
+            latitude=0.31361,
+            longitude=32.58111,
+        ),
+        country="Uganda",
+    )
+
+    locations = list_stored_locations(
+        db=db_session,
+        country="Uganda",
+    )
+
+    assert len(locations) == 1
+    assert locations[0].location_name == "Kampala Central Market"
+
+
+def test_list_stored_locations_can_filter_by_verified_status(db_session):
+    create_stored_location(
+        db=db_session,
+        location_name="Unverified Market",
+        geocoded_location=GeocodedLocation(
+            display_name="Unverified Market, Kenya",
+            latitude=-1.0,
+            longitude=36.0,
+        ),
+        country="Kenya",
+        is_verified=False,
+    )
+    create_stored_location(
+        db=db_session,
+        location_name="Verified Market",
+        geocoded_location=GeocodedLocation(
+            display_name="Verified Market, Kenya",
+            latitude=-1.1,
+            longitude=36.1,
+        ),
+        country="Kenya",
+        is_verified=True,
+    )
+
+    locations = list_stored_locations(
+        db=db_session,
+        verified_only=True,
+    )
+
+    assert len(locations) == 1
+    assert locations[0].location_name == "Verified Market"
+    assert locations[0].is_verified is True

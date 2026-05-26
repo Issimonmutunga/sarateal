@@ -11,6 +11,26 @@ def normalize_location_name(location_name: str) -> str:
     return " ".join(location_name.strip().lower().split())
 
 
+def list_stored_locations(
+    db: Session,
+    country: str | None = None,
+    verified_only: bool | None = None,
+) -> list[StoredLocation]:
+    statement = select(StoredLocation).order_by(StoredLocation.location_name)
+
+    if country is not None:
+        statement = statement.where(
+            StoredLocation.country == country.strip(),
+        )
+
+    if verified_only is not None:
+        statement = statement.where(
+            StoredLocation.is_verified == verified_only,
+        )
+
+    return list(db.scalars(statement).all())
+
+
 def get_stored_location(
     db: Session,
     location_name: str,
