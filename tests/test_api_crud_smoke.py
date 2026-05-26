@@ -154,7 +154,32 @@ def test_county_weather_forecast_endpoint_is_registered(monkeypatch):
 
     assert response.status_code == 200
     assert response.json() == []
-    
+
+def test_geocoding_search_endpoint_is_registered(monkeypatch):
+    def fake_geocode_location_name(
+        location_name: str,
+        country: str = "Kenya",
+        limit: int = 1,
+    ):
+        return []
+
+    monkeypatch.setattr(
+        "app.api.geocoding.geocode_location_name",
+        fake_geocode_location_name,
+    )
+
+    response = client.get(
+        "/geocoding/search",
+        params={
+            "location_name": "Wakulima Market Nairobi",
+            "country": "Kenya",
+            "limit": 1,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
