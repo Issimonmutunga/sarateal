@@ -52,6 +52,20 @@ http://127.0.0.1:8000/docs
 pytest
 ```
 
+## Deployment command
+
+For hosted environments, use:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+For local Windows testing, use:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
 ## Example endpoints
 
 ```text
@@ -86,6 +100,7 @@ pytest
 
 Add a license before public release. MIT or Apache-2.0 are common choices for open-source Python projects.
 
+````
 
 Run:
 
@@ -96,5 +111,5 @@ pytest
 Commit only after tests pass:
 
 ```text
-Update README with Sarateal icon
+Document deployment start command
 ```
