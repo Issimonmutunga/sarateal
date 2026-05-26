@@ -7,7 +7,8 @@ client = TestClient(app)
 
 
 def test_geocoding_search_endpoint_returns_success(monkeypatch):
-    def fake_geocode_location_name(
+    def fake_geocode_location_name_with_cache(
+        db,
         location_name: str,
         country: str = "Kenya",
         limit: int = 1,
@@ -15,8 +16,8 @@ def test_geocoding_search_endpoint_returns_success(monkeypatch):
         return []
 
     monkeypatch.setattr(
-        "app.api.geocoding.geocode_location_name",
-        fake_geocode_location_name,
+        "app.api.geocoding.geocode_location_name_with_cache",
+        fake_geocode_location_name_with_cache,
     )
 
     response = client.get(

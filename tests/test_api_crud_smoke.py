@@ -156,7 +156,8 @@ def test_county_weather_forecast_endpoint_is_registered(monkeypatch):
     assert response.json() == []
 
 def test_geocoding_search_endpoint_is_registered(monkeypatch):
-    def fake_geocode_location_name(
+    def fake_geocode_location_name_with_cache(
+        db,
         location_name: str,
         country: str = "Kenya",
         limit: int = 1,
@@ -164,8 +165,8 @@ def test_geocoding_search_endpoint_is_registered(monkeypatch):
         return []
 
     monkeypatch.setattr(
-        "app.api.geocoding.geocode_location_name",
-        fake_geocode_location_name,
+        "app.api.geocoding.geocode_location_name_with_cache",
+        fake_geocode_location_name_with_cache,
     )
 
     response = client.get(
