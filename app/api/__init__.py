@@ -13,6 +13,7 @@ from app.api.matches import router as matches_router
 from app.api.price_ingestion import router as price_ingestion_router
 from app.api.prices import router as prices_router
 from app.api.products import router as products_router
+from app.api.stored_locations import router as stored_locations_router
 from app.api.tenders import router as tenders_router
 from app.api.weather import router as weather_router
 
@@ -33,6 +34,7 @@ __all__ = [
     "price_ingestion_router",
     "prices_router",
     "products_router",
+    "stored_locations_router",
     "tenders_router",
     "weather_router",
 ]

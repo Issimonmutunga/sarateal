@@ -19,6 +19,7 @@ from app.api import (
     price_ingestion_router,
     prices_router,
     products_router,
+    stored_locations_router,
     tenders_router,
     weather_router,
 )
@@ -55,6 +56,7 @@ app.include_router(weather_router)
 app.include_router(market_weather_router)
 app.include_router(county_weather_router)
 app.include_router(geocoding_router)
+app.include_router(stored_locations_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
