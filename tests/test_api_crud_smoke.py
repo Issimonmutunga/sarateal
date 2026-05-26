@@ -181,6 +181,24 @@ def test_geocoding_search_endpoint_is_registered(monkeypatch):
     assert response.status_code == 200
     assert response.json() == []
 
+def test_stored_locations_endpoint_is_registered(monkeypatch):
+    def fake_list_stored_locations(
+        db,
+        country: str | None = None,
+        verified_only: bool | None = None,
+    ):
+        return []
+
+    monkeypatch.setattr(
+        "app.api.stored_locations.list_stored_locations",
+        fake_list_stored_locations,
+    )
+
+    response = client.get("/stored-locations")
+
+    assert response.status_code == 200
+    assert response.json() == []
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
