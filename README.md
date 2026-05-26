@@ -5,7 +5,7 @@
 <h1 align="center">Sarateal</h1>
 
 <p align="center">
-  Lightweight open-source farmer market access and food supply intelligence.
+  Farmer market access and food supply intelligence.
 </p>
 
 ---
