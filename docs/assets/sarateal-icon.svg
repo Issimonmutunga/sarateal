@@ -1,0 +1,20 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Sarateal icon</title>
+  <desc id="desc">A minimal green sprout icon representing agricultural market access and growth.</desc>
+
+  <rect width="256" height="256" rx="56" fill="#F6FAF3"></rect>
+
+  <path d="M128 178C128 143 128 116 128 80" stroke="#1F6B3A" stroke-width="14" stroke-linecap="round"></path>
+
+  <path d="M123 104C94 105 69 91 56 66C87 57 115 68 129 94C132 99 129 104 123 104Z" fill="#5E9F45"></path>
+
+  <path d="M134 96C160 75 191 70 218 84C204 113 176 128 145 121C135 119 127 105 134 96Z" fill="#2F7D3C"></path>
+
+  <path d="M126 139C101 138 78 150 66 173C94 181 120 171 133 148C136 143 132 139 126 139Z" fill="#8DBB5A"></path>
+
+  <path d="M132 138C157 138 180 150 192 173C164 181 138 171 125 148C122 143 126 138 132 138Z" fill="#4D9443"></path>
+
+  <path d="M80 195H176" stroke="#1F6B3A" stroke-width="14" stroke-linecap="round"></path>
+
+  <path d="M96 212H160" stroke="#7FAA45" stroke-width="10" stroke-linecap="round"></path>
+</svg>
