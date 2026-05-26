@@ -107,6 +107,32 @@ def test_weather_forecast_endpoint_is_registered(monkeypatch):
     assert response.json() == []
 
 
+def test_market_weather_forecast_endpoint_is_registered(monkeypatch):
+    def fake_get_market_weather_risk_forecast(
+        market_name: str,
+        county: str | None = None,
+        forecast_days: int = 7,
+    ):
+        return []
+
+    monkeypatch.setattr(
+        "app.api.market_weather.get_market_weather_risk_forecast",
+        fake_get_market_weather_risk_forecast,
+    )
+
+    response = client.get(
+        "/market-weather/forecast",
+        params={
+            "market_name": "Wakulima Market",
+            "county": "Nairobi",
+            "forecast_days": 1,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
