@@ -26,7 +26,9 @@ env/
 *.duckdb
 
 # Data outputs
-data/raw/
+data/raw/*
+!data/raw/prices/
+!data/raw/prices/sample_prices.csv
 data/processed/
 outputs/
 exports/

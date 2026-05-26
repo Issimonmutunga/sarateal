@@ -1,0 +1,6 @@
+product_name,county,unit,price,observed_on,source_name,market_name,source_url,confidence_score,notes
+Maize,Nairobi,kg,45.5,2026-05-25,Manual Survey,Wakulima Market,https://example.com/prices,0.9,Sample MVP price record
+Beans,Meru,kg,120,2026-05-25,Manual Survey,,https://example.com/prices,0.9,Sample MVP price record
+Potatoes,Nakuru,kg,55,2026-05-25,Manual Survey,,https://example.com/prices,0.85,Sample MVP price record
+Tomatoes,Mombasa,kg,60,2026-05-25,Manual Survey,Kongowea Market,https://example.com/prices,0.85,Sample MVP price record
+Onions,Kisumu,kg,50,2026-05-25,Manual Survey,,https://example.com/prices,0.85,Sample MVP price record
