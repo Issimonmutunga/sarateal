@@ -1,0 +1,58 @@
+Metadata-Version: 2.4
+Name: sarateal
+Version: 0.1.0
+Summary: Lightweight farmer market access and food supply intelligence platform
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn[standard]>=0.30.0
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: pydantic-settings>=2.4.0
+Requires-Dist: sqlalchemy>=2.0.0
+Requires-Dist: streamlit>=1.37.0
+Requires-Dist: pandas>=2.2.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: requests>=2.32.0
+Requires-Dist: httpx>=0.27.0
+Provides-Extra: dev
+Requires-Dist: pytest>=9.0.0; extra == "dev"
+Requires-Dist: ruff>=0.6.0; extra == "dev"
+
+# Sarateal
+
+Sarateal is a lightweight Kenya-wide farmer market access radar.
+
+It helps farmers, cooperatives, aggregators, buyers, NGOs, counties, and food distributors connect supply to real demand through market opportunities, tenders, prices, and simple risk signals.
+
+## MVP focus
+
+- Farmer supply registration
+- Buyer demand registration
+- Tender and opportunity listing
+- Simple product-location-volume matching
+- Basic shortage and opportunity scoring
+- Kenya-wide county structure
+- Streamlit dashboard first, API backend underneath
+
+## Initial commodities
+
+- Maize
+- Beans
+- Potatoes
+- Tomatoes
+- Onions
+
+## Stack
+
+- Python
+- FastAPI
+- PostgreSQL/PostGIS or DuckDB
+- Streamlit
+- CSV / GeoParquet
+- Scheduled Python jobs
+
+## Development rule
+
+Build one file at a time.
+
+Tests will be added after the first MVP structure is in place.
