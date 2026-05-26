@@ -1,3 +1,6 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from app.api import (
@@ -5,8 +8,9 @@ from app.api import (
     buyer_demand_router,
     counties_router,
     county_weather_router,
-    farmers_router,
     farmer_supply_router,
+    farmers_router,
+    geocoding_router,
     health_router,
     market_weather_router,
     markets_router,
@@ -25,17 +29,20 @@ from app.db.init_db import init_db
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    init_db()
+    yield
+
+
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
+    lifespan=lifespan,
 )
 
 register_exception_handlers(app)
-
-
-@app.on_event("startup")
-def on_startup() -> None:
-    init_db()
 
 
 app.include_router(health_router)
@@ -47,6 +54,7 @@ app.include_router(price_ingestion_router)
 app.include_router(weather_router)
 app.include_router(market_weather_router)
 app.include_router(county_weather_router)
+app.include_router(geocoding_router)
 app.include_router(farmers_router)
 app.include_router(buyers_router)
 app.include_router(farmer_supply_router)
