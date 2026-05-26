@@ -135,6 +135,7 @@ def test_market_weather_forecast_endpoint_is_registered(monkeypatch):
 
 def test_county_weather_forecast_endpoint_is_registered(monkeypatch):
     def fake_get_county_weather_risk_forecast(
+        db,
         county: str,
         forecast_days: int = 7,
     ):
