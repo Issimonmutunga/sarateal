@@ -92,17 +92,6 @@ Sarateal currently integrates with:
 
 The project uses small, tested service and API layers.
 
-```bash
-pytest
-```
-
 ## License
 
 Add a license before public release. MIT or Apache-2.0 are common choices for open-source Python projects.
-
-
-Run:
-
-```bash
-pytest
-````
