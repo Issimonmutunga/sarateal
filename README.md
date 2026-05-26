@@ -100,7 +100,6 @@ pytest
 
 Add a license before public release. MIT or Apache-2.0 are common choices for open-source Python projects.
 
-````
 
 Run:
 
