@@ -1,8 +1,10 @@
 import pytest
 
 from app.data_sources.locations.nominatim import (
+    NOMINATIM_SEARCH_URL,
     GeocodedLocation,
     build_nominatim_search_params,
+    fetch_nominatim_location,
     parse_nominatim_search_result,
     parse_nominatim_search_results,
 )
@@ -128,3 +130,65 @@ def test_parse_nominatim_search_result_requires_longitude():
 
     with pytest.raises(KeyError):
         parse_nominatim_search_result(result)
+
+
+def test_fetch_nominatim_location_sends_expected_request_and_parses_response(
+    monkeypatch,
+):
+    captured_request = {}
+
+    class FakeResponse:
+        def raise_for_status(self):
+            captured_request["raise_for_status_called"] = True
+
+        def json(self):
+            return [
+                {
+                    "display_name": "Wakulima Market, Nairobi, Kenya",
+                    "lat": "-1.28333",
+                    "lon": "36.83333",
+                }
+            ]
+
+    def fake_get(url, params, headers, timeout):
+        captured_request["url"] = url
+        captured_request["params"] = params
+        captured_request["headers"] = headers
+        captured_request["timeout"] = timeout
+
+        return FakeResponse()
+
+    monkeypatch.setattr(
+        "app.data_sources.locations.nominatim.requests.get",
+        fake_get,
+    )
+
+    locations = fetch_nominatim_location(
+        query="Wakulima Market Nairobi",
+        user_agent="sarateal-test/0.1",
+        country="Kenya",
+        limit=1,
+        timeout_seconds=5,
+    )
+
+    assert captured_request == {
+        "url": NOMINATIM_SEARCH_URL,
+        "params": {
+            "q": "Wakulima Market Nairobi, Kenya",
+            "format": "json",
+            "limit": 1,
+        },
+        "headers": {
+            "User-Agent": "sarateal-test/0.1",
+        },
+        "timeout": 5,
+        "raise_for_status_called": True,
+    }
+
+    assert locations == [
+        GeocodedLocation(
+            display_name="Wakulima Market, Nairobi, Kenya",
+            latitude=-1.28333,
+            longitude=36.83333,
+        )
+    ]
