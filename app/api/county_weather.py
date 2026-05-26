@@ -1,8 +1,10 @@
 from datetime import date
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
+from app.db.session import get_db
 from app.services.county_weather import get_county_weather_risk_forecast
 
 
@@ -21,10 +23,12 @@ class CountyWeatherRiskSignalRead(BaseModel):
 
 @router.get("/forecast", response_model=list[CountyWeatherRiskSignalRead])
 def read_county_weather_risk_forecast(
-    county: str,
-    forecast_days: int = 7,
+    county: str = Query(..., min_length=1),
+    forecast_days: int = Query(default=7, ge=1, le=16),
+    db: Session = Depends(get_db),
 ):
     return get_county_weather_risk_forecast(
+        db=db,
         county=county,
         forecast_days=forecast_days,
     )

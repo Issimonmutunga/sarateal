@@ -11,6 +11,7 @@ client = TestClient(app)
 
 def test_county_weather_forecast_endpoint_returns_signals(monkeypatch):
     def fake_get_county_weather_risk_forecast(
+        db,
         county: str,
         forecast_days: int = 7,
     ):
