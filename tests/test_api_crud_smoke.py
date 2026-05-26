@@ -199,6 +199,40 @@ def test_stored_locations_endpoint_is_registered(monkeypatch):
     assert response.status_code == 200
     assert response.json() == []
 
+
+def test_stored_location_verification_endpoint_is_registered(monkeypatch):
+    def fake_set_stored_location_verification(
+        db,
+        stored_location_id: int,
+        is_verified: bool,
+    ):
+        return {
+            "id": stored_location_id,
+            "location_name": "Wakulima Market Nairobi",
+            "normalized_name": "wakulima market nairobi",
+            "country": "Kenya",
+            "latitude": -1.28333,
+            "longitude": 36.83333,
+            "source_name": "OpenStreetMap Nominatim",
+            "source_display_name": "Wakulima Market, Nairobi, Kenya",
+            "is_verified": is_verified,
+        }
+
+    monkeypatch.setattr(
+        "app.api.stored_locations.set_stored_location_verification",
+        fake_set_stored_location_verification,
+    )
+
+    response = client.patch(
+        "/stored-locations/1/verification",
+        params={
+            "is_verified": True,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["is_verified"] is True
+
 def test_docs_route_is_available():
     response = client.get("/docs")
 
