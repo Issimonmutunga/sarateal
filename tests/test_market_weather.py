@@ -1,6 +1,8 @@
 from datetime import date
 
+from app.data_sources.locations.nominatim import GeocodedLocation
 from app.services.market_weather import get_market_weather_risk_forecast
+from app.services.stored_locations import create_stored_location
 from app.services.weather_signals import WeatherRiskSignal
 
 
@@ -41,6 +43,57 @@ def test_get_market_weather_risk_forecast_returns_signals_for_known_market(
     assert signals[0].latitude == -1.286389
     assert signals[0].longitude == 36.817223
     assert signals[0].heat_risk == "medium"
+
+
+def test_get_market_weather_risk_forecast_prefers_verified_cached_coordinates(
+    db_session,
+    monkeypatch,
+):
+    create_stored_location(
+        db=db_session,
+        location_name="Wakulima Market",
+        geocoded_location=GeocodedLocation(
+            display_name="Verified Wakulima Market, Nairobi, Kenya",
+            latitude=-1.28,
+            longitude=36.82,
+        ),
+        country="Kenya",
+        is_verified=True,
+    )
+
+    def fake_get_weather_risk_forecast(
+        latitude: float,
+        longitude: float,
+        forecast_days: int = 7,
+    ):
+        return [
+            WeatherRiskSignal(
+                latitude=latitude,
+                longitude=longitude,
+                signal_date=date(2026, 5, 25),
+                heat_risk="medium",
+                rainfall_signal="light_rain",
+                summary="Verified cached coordinate was used.",
+                source_name="Open-Meteo",
+            )
+        ]
+
+    monkeypatch.setattr(
+        "app.services.market_weather.get_weather_risk_forecast",
+        fake_get_weather_risk_forecast,
+    )
+
+    signals = get_market_weather_risk_forecast(
+        db=db_session,
+        market_name="Wakulima Market",
+        county="Nairobi",
+        forecast_days=1,
+    )
+
+    assert len(signals) == 1
+    assert signals[0].latitude == -1.28
+    assert signals[0].longitude == 36.82
+    assert signals[0].summary == "Verified cached coordinate was used."
 
 
 def test_get_market_weather_risk_forecast_returns_empty_list_for_unknown_market(
