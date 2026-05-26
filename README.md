@@ -88,10 +88,3 @@ Sarateal currently integrates with:
 * [Open-Meteo](https://open-meteo.com/) for weather forecast data.
 * [Nominatim/OpenStreetMap](https://operations.osmfoundation.org/policies/nominatim/) for geocoding, used through a cache-aware adapter with a custom User-Agent.
 
-## Development
-
-The project uses small, tested service and API layers.
-
-## License
-
-Add a license before public release. MIT or Apache-2.0 are common choices for open-source Python projects.
