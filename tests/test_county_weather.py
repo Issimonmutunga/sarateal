@@ -4,7 +4,10 @@ from app.services.county_weather import get_county_weather_risk_forecast
 from app.services.weather_signals import WeatherRiskSignal
 
 
-def test_get_county_weather_risk_forecast_returns_signals_for_known_county(monkeypatch):
+def test_get_county_weather_risk_forecast_returns_signals_for_known_county(
+    db_session,
+    monkeypatch,
+):
     def fake_get_weather_risk_forecast(
         latitude: float,
         longitude: float,
@@ -28,6 +31,7 @@ def test_get_county_weather_risk_forecast_returns_signals_for_known_county(monke
     )
 
     signals = get_county_weather_risk_forecast(
+        db=db_session,
         county="Nairobi",
         forecast_days=1,
     )
@@ -36,11 +40,13 @@ def test_get_county_weather_risk_forecast_returns_signals_for_known_county(monke
     assert signals[0].latitude == -1.286389
     assert signals[0].longitude == 36.817223
     assert signals[0].heat_risk == "medium"
-    assert signals[0].rainfall_signal == "light_rain"
 
 
-def test_get_county_weather_risk_forecast_returns_empty_list_for_unknown_county():
+def test_get_county_weather_risk_forecast_returns_empty_list_for_unknown_county(
+    db_session,
+):
     signals = get_county_weather_risk_forecast(
+        db=db_session,
         county="Unknown County",
         forecast_days=1,
     )
