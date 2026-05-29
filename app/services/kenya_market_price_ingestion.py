@@ -1,7 +1,7 @@
+from app.data_sources.prices.base import RawPriceRecord
 from app.data_sources.prices.kenya_market_price_adapter import (
     KenyaMarketPriceAdapter,
 )
-from app.data_sources.prices.base import RawPriceRecord
 
 
 def fetch_raw_price_records_from_adapter(
@@ -15,7 +15,6 @@ def fetch_raw_price_records_from_adapter(
             county=record.county,
             unit=record.unit,
             price=record.price,
-            currency=record.currency,
             observed_on=record.observed_on,
             source_name=record.source_name,
             source_url=record.source_url,
