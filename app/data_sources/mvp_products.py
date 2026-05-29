@@ -24,4 +24,29 @@ MVP_PRODUCTS = [
         "category": "vegetable",
         "unit": "kg",
     },
+    {
+        "name": "Cabbage",
+        "category": "vegetable",
+        "unit": "kg",
+    },
+    {
+        "name": "Kale",
+        "category": "vegetable",
+        "unit": "kg",
+    },
+    {
+        "name": "Rice",
+        "category": "cereal",
+        "unit": "kg",
+    },
+    {
+        "name": "Sorghum",
+        "category": "cereal",
+        "unit": "kg",
+    },
+    {
+        "name": "Cowpeas",
+        "category": "legume",
+        "unit": "kg",
+    },
 ]
