@@ -9,12 +9,16 @@ from app.data_sources.prices.csv_adapter import (
     read_price_csv,
     validate_csv_columns,
 )
+from app.data_sources.prices.http_csv_market_price_adapter import (
+    HttpCsvKenyaMarketPriceAdapter,
+)
 from app.data_sources.prices.kenya_market_price_adapter import (
     KenyaMarketPriceAdapter,
     KenyaMarketPriceRecord,
 )
 
 __all__ = [
+    "HttpCsvKenyaMarketPriceAdapter",
     "KenyaMarketPriceAdapter",
     "KenyaMarketPriceRecord",
     "RawPriceRecord",
