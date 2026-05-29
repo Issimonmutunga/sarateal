@@ -66,7 +66,7 @@ def main() -> None:
         )
         db.commit()
 
-    print(f"Created {len(created_prices)} price records")
+    print(f"Processed {len(created_prices)} matching price records")
 
 
 if __name__ == "__main__":
