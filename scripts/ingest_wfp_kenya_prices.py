@@ -21,13 +21,18 @@ def main() -> None:
         "--limit",
         type=int,
         default=100,
-        help="Maximum records to process. Use 0 for all records.",
+        help="Maximum newest records to process. Use 0 for all records.",
     )
 
     args = parser.parse_args()
 
     adapter = WfpKenyaPriceAdapter()
     records = fetch_raw_price_records_from_adapter(adapter)
+    records = sorted(
+        records,
+        key=lambda record: record.observed_on,
+        reverse=True,
+    )
 
     if args.limit > 0:
         records = records[: args.limit]
