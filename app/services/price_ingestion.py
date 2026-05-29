@@ -6,6 +6,7 @@ from app.models.market import Market
 from app.models.product import Product
 from app.schemas.price import PriceCreate
 from app.services.prices import create_price
+from app.services.product_aliases import find_product_by_alias
 
 
 def find_product_by_name(db: Session, product_name: str) -> Product | None:
@@ -27,15 +28,34 @@ def find_market_by_name_and_county(
     return db.scalar(statement)
 
 
+def resolve_product_for_price_record(
+    db: Session,
+    record: RawPriceRecord,
+) -> Product | None:
+    product = find_product_by_name(
+        db=db,
+        product_name=record.product_name,
+    )
+
+    if product:
+        return product
+
+    return find_product_by_alias(
+        db=db,
+        source_name=record.source_name,
+        source_product_name=record.product_name,
+    )
+
+
 def ingest_raw_price_record(
     db: Session,
     record: RawPriceRecord,
 ):
     normalized_record = normalize_raw_price_record(record)
 
-    product = find_product_by_name(
+    product = resolve_product_for_price_record(
         db=db,
-        product_name=normalized_record.product_name,
+        record=normalized_record,
     )
 
     if not product:
