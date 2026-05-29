@@ -9,8 +9,14 @@ from app.data_sources.prices.csv_adapter import (
     read_price_csv,
     validate_csv_columns,
 )
+from app.data_sources.prices.kenya_market_price_adapter import (
+    KenyaMarketPriceAdapter,
+    KenyaMarketPriceRecord,
+)
 
 __all__ = [
+    "KenyaMarketPriceAdapter",
+    "KenyaMarketPriceRecord",
     "RawPriceRecord",
     "normalize_price_text",
     "normalize_raw_price_record",
