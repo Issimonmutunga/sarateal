@@ -16,10 +16,43 @@ WFP_PRODUCT_ALIAS_MAP = {
         "Maize (white)",
         "Maize (white, dry)",
     ],
+    "Maize Flour": [
+        "Maize flour",
+        "Maize flour (white)",
+    ],
+    "Wheat Flour": [
+        "Wheat flour",
+    ],
+    "Rice": [
+        "Rice",
+        "Rice (aromatic)",
+        "Rice (imported)",
+        "Rice (imported, Pakistan)",
+        "Rice (local)",
+    ],
+    "Sorghum": [
+        "Sorghum",
+        "Sorghum (red)",
+        "Sorghum (white)",
+    ],
+    "Millet": [
+        "Millet (finger)",
+    ],
     "Beans": [
         "Beans",
         "Beans (dry)",
+        "Beans (dolichos)",
+        "Beans (kidney)",
+        "Beans (mung)",
         "Beans (rosecoco)",
+        "Beans (yellow)",
+    ],
+    "Cowpeas": [
+        "Cowpeas",
+        "Cowpeas (dry)",
+    ],
+    "Pigeon Peas": [
+        "Pigeon peas (dry)",
     ],
     "Potatoes": [
         "Potatoes (Irish)",
@@ -32,6 +65,7 @@ WFP_PRODUCT_ALIAS_MAP = {
     "Onions": [
         "Onions",
         "Onions (dry)",
+        "Onions (red)",
     ],
     "Cabbage": [
         "Cabbage",
@@ -39,16 +73,41 @@ WFP_PRODUCT_ALIAS_MAP = {
     "Kale": [
         "Kale",
     ],
-    "Rice": [
-        "Rice",
-        "Rice (imported)",
-        "Rice (local)",
+    "Spinach": [
+        "Spinach",
     ],
-    "Sorghum": [
-        "Sorghum",
+    "Bananas": [
+        "Bananas",
     ],
-    "Cowpeas": [
-        "Cowpeas",
+    "Milk": [
+        "Milk (camel, fresh)",
+        "Milk (cow, fresh)",
+        "Milk (cow, pasteurized)",
+        "Milk (UHT)",
+    ],
+    "Meat": [
+        "Meat (beef)",
+        "Meat (camel)",
+        "Meat (goat)",
+    ],
+    "Fish": [
+        "Fish (omena, dry)",
+    ],
+    "Bread": [
+        "Bread",
+    ],
+    "Sugar": [
+        "Sugar",
+    ],
+    "Salt": [
+        "Salt",
+    ],
+    "Cooking Oil": [
+        "Oil (vegetable)",
+        "Oil (vegetable, fortified)",
+    ],
+    "Cooking Fat": [
+        "Cooking fat",
     ],
 }
 
