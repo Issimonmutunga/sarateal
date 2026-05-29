@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from app.data_sources.prices.http_csv_market_price_adapter import (
     HttpCsvKenyaMarketPriceAdapter,
 )
@@ -25,3 +27,19 @@ class WfpKenyaPriceAdapter(HttpCsvKenyaMarketPriceAdapter):
                 "notes": "priceflag",
             },
         )
+
+    def _required(self, row: Mapping[str, str | None], field_name: str) -> str:
+        if field_name == "county":
+            county = self._optional(row, "county")
+
+            if county:
+                return county
+
+            market = self._optional(row, "market_name")
+
+            if market:
+                return market
+
+            return "Unknown"
+
+        return super()._required(row, field_name)
