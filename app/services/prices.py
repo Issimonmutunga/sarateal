@@ -39,6 +39,20 @@ def get_price_or_raise(db: Session, price_id: int) -> Price:
     return price
 
 
+def find_existing_price(db: Session, price_in: PriceCreate) -> Price | None:
+    statement = select(Price).where(
+        Price.product_id == price_in.product_id,
+        Price.market_id == price_in.market_id,
+        Price.county == price_in.county,
+        Price.unit == price_in.unit,
+        Price.price == price_in.price,
+        Price.observed_on == price_in.observed_on,
+        Price.source_name == price_in.source_name,
+    )
+
+    return db.scalar(statement)
+
+
 def validate_price(db: Session, price_in: PriceCreate) -> None:
     product = db.get(Product, price_in.product_id)
 
@@ -78,6 +92,14 @@ def validate_price(db: Session, price_in: PriceCreate) -> None:
 
 def create_price(db: Session, price_in: PriceCreate) -> Price:
     validate_price(db=db, price_in=price_in)
+
+    existing_price = find_existing_price(
+        db=db,
+        price_in=price_in,
+    )
+
+    if existing_price:
+        return existing_price
 
     price = Price(**price_in.model_dump())
 
