@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -10,8 +10,18 @@ router = APIRouter(prefix="/prices", tags=["prices"])
 
 
 @router.get("", response_model=list[PriceRead])
-def read_prices(db: Session = Depends(get_db)):
-    return list_prices(db=db)
+def read_prices(
+    limit: int = Query(
+        default=100,
+        ge=1,
+        le=1000,
+        description="Maximum number of latest price records to return.",
+    ),
+    db: Session = Depends(get_db),
+):
+    prices = list_prices(db=db)
+
+    return prices[:limit]
 
 
 @router.post("", response_model=PriceRead)
