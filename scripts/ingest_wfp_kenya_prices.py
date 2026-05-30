@@ -5,7 +5,7 @@ from app.db.session import SessionLocal
 from app.services.kenya_market_price_ingestion import (
     fetch_raw_price_records_from_adapter,
 )
-from app.services.price_ingestion import ingest_raw_price_records
+from app.services.price_ingestion import ingest_raw_price_records_with_summary
 
 
 def main() -> None:
@@ -60,13 +60,16 @@ def main() -> None:
         return
 
     with SessionLocal() as db:
-        created_prices = ingest_raw_price_records(
+        summary = ingest_raw_price_records_with_summary(
             db=db,
             records=records,
         )
         db.commit()
 
-    print(f"Processed {len(created_prices)} matching price records")
+    print(f"Total records: {summary.total_records}")
+    print(f"Inserted records: {summary.created_count}")
+    print(f"Existing records: {summary.existing_count}")
+    print(f"Unmatched records: {summary.unmatched_count}")
 
 
 if __name__ == "__main__":
