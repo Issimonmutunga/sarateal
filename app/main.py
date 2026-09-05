@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     counties_router,
     county_weather_router,
-    geocoding_router,
     health_router,
     market_weather_router,
     markets_router,
@@ -45,4 +44,3 @@ app.include_router(markets_router)
 app.include_router(weather_router)
 app.include_router(county_weather_router)
 app.include_router(market_weather_router)
-app.include_router(geocoding_router)

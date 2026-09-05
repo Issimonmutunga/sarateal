@@ -12,9 +12,9 @@
 
 Sarateal is a **stateless, database-free** API for agricultural market
 coordination. Reference data (counties, products, markets with published
-coordinates) lives in memory; weather and geocoding signals are fetched live
-from external providers on demand. No Postgres, no SQLAlchemy — which keeps
-startup memory well under 512 MB.
+coordinates) lives in memory; weather signals are fetched live from external
+providers on demand. No Postgres, no SQLAlchemy — which keeps startup memory
+well under 512 MB.
 
 No demo, simulated, or imputed records are served. Per the STMOI methodology,
 all observations (supply, demand, price) are recorded by real users in the
@@ -29,7 +29,10 @@ frontend's IndexedDB; the API serves reference data and live signals only.
 - `GET /weather/forecast` — Open-Meteo risk signals for a coordinate
 - `GET /market-weather/forecast` — risk signals for a known market
 - `GET /county-weather/forecast` — risk signals for a known county
-- `GET /geocoding/search` — Nominatim/OpenStreetMap geocoding (in-memory cached)
+
+Geocoding is intentionally **not** part of the API — the frontend resolves market
+and place names directly against the public [Nominatim](https://nominatim.openstreetmap.org/)
+API in the browser, so no coordinates are ever proxied or cached server-side.
 
 The API is read-only by design. All application data is stored in the browser
 via IndexedDB on the frontend.
@@ -88,4 +91,3 @@ list, and it is not needed to run Sarateal.
 Sarateal currently integrates with:
 
 - [Open-Meteo](https://open-meteo.com/) for weather forecast data.
-- [Nominatim/OpenStreetMap](https://operations.osmfoundation.org/policies/nominatim/) for geocoding, used through a cache-aware adapter with a custom User-Agent.

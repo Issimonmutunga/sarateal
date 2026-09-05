@@ -1,9 +1,5 @@
 from app.services.counties import list_counties_service
 from app.services.county_weather import get_county_weather_risk_forecast
-from app.services.geocoding import (
-    geocode_location_name,
-    geocode_location_name_with_cache,
-)
 from app.services.location_resolution import (
     ResolvedLocationCoordinate,
     resolve_county_coordinate,
@@ -29,8 +25,6 @@ __all__ = [
     "build_weather_risk_signals",
     "classify_heat_risk",
     "classify_rainfall_signal",
-    "geocode_location_name",
-    "geocode_location_name_with_cache",
     "get_county_weather_risk_forecast",
     "get_market_service",
     "get_market_weather_risk_forecast",

@@ -4,7 +4,7 @@
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port 8000
-````
+```
 
 Open:
 
@@ -29,28 +29,15 @@ Environment variables:
 ```text
 APP_NAME=Sarateal
 APP_VERSION=0.1.0
-DATABASE_URL=sqlite:///./sarateal.db
 ```
 
-## Important database note
+No database connection string is needed. Sarateal is stateless — reference data
+and weather signals are fetched on demand, and all application data lives in the
+browser (IndexedDB) on the frontend.
 
-SQLite is acceptable for local testing and lightweight demos.
-
-For persistent hosted deployment, switch to a hosted PostgreSQL database later and update:
-
-```text
-DATABASE_URL
-```
-
-## Pre-deployment checklist
-
-```bash
-pytest
-git status
-git add .
-git commit -m "Prepare deployment docs"
-git push
-```
+If a stale `DATABASE_URL` from an earlier database-backed version is still set in
+Render, remove it: it points at an old tenant and is never read by the current
+code, but keeping it invites confusion.
 
 ## Smoke-test after deployment
 
@@ -58,13 +45,12 @@ Check:
 
 ```text
 GET /health
+GET /counties
+GET /products
 GET /markets
-GET /prices
 GET /weather/forecast
 GET /market-weather/forecast
 GET /county-weather/forecast
-GET /geocoding/search
-GET /stored-locations
 ```
 
 Also open:
