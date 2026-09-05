@@ -1,12 +1,9 @@
 from app.data_sources.prices.wfp_kenya_price_adapter import WfpKenyaPriceAdapter
-from app.services.kenya_market_price_ingestion import (
-    fetch_raw_price_records_from_adapter,
-)
 
 
 def main() -> None:
     adapter = WfpKenyaPriceAdapter()
-    records = fetch_raw_price_records_from_adapter(adapter)
+    records = adapter.fetch_prices()
 
     print(f"Fetched {len(records)} WFP Kenya price records")
 

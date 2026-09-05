@@ -5,10 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "Sarateal"
-    app_version: str = "0.1.0"
+    app_version: str = "0.2.0"
     environment: str = "development"
-
-    database_url: str = "sqlite:///./sarateal.db"
 
     model_config = SettingsConfigDict(
         env_file=".env",

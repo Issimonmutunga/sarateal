@@ -27,5 +27,5 @@ def test_health_route_returns_application_status():
 
     assert payload["status"] == "ok"
     assert payload["app"] == "Sarateal"
-    assert payload["version"] == "0.1.0"
+    assert payload["version"] == "0.2.0"
     assert payload["environment"] == "development"

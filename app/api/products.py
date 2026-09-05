@@ -1,32 +1,19 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Query
 
-from app.db.session import get_db
-from app.schemas.product import ProductCreate, ProductRead
-from app.services.products import create_product, get_product, list_products
+from app.services.products import get_product_service, list_products_service
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 
-@router.post("/", response_model=ProductRead)
-def create_product_endpoint(
-    product_in: ProductCreate,
-    db: Session = Depends(get_db),
-):
-    return create_product(db=db, product_in=product_in)
-
-
-@router.get("/", response_model=list[ProductRead])
+@router.get("/")
 def list_products_endpoint(
-    active_only: bool = True,
-    db: Session = Depends(get_db),
+    active_only: bool = Query(default=True),
 ):
-    return list_products(db=db, active_only=active_only)
+    return list_products_service(active_only=active_only)
 
 
-@router.get("/{product_id}", response_model=ProductRead | None)
+@router.get("/{product_id}")
 def get_product_endpoint(
     product_id: int,
-    db: Session = Depends(get_db),
 ):
-    return get_product(db=db, product_id=product_id)
+    return get_product_service(product_id)

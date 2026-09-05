@@ -1,39 +1,10 @@
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from app.db.base import Base
-from app.models import (
-    Buyer,
-    BuyerDemand,
-    County,
-    Farmer,
-    FarmerSupply,
-    Match,
-    Product,
-    Tender,
-)
+from app.services.stored_locations import clear_stored_locations
 
 
-@pytest.fixture()
-def db_session():
-    engine = create_engine(
-        "sqlite:///:memory:",
-        connect_args={"check_same_thread": False},
-    )
+@pytest.fixture(autouse=True)
+def _reset_in_memory_cache():
+    clear_stored_locations()
 
-    testing_session_local = sessionmaker(
-        autocommit=False,
-        autoflush=False,
-        bind=engine,
-    )
-
-    Base.metadata.create_all(bind=engine)
-
-    db = testing_session_local()
-
-    try:
-        yield db
-    finally:
-        db.close()
-        Base.metadata.drop_all(bind=engine)
+    yield

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from sqlalchemy.orm import Session
-
 from app.data_sources.locations.nominatim import (
     GeocodedLocation,
     fetch_nominatim_location,
@@ -12,7 +10,7 @@ from app.services.stored_locations import (
 )
 
 
-DEFAULT_NOMINATIM_USER_AGENT = "sarateal/0.1"
+DEFAULT_NOMINATIM_USER_AGENT = "sarateal/0.2"
 
 
 def geocode_location_name(
@@ -35,7 +33,6 @@ def geocode_location_name(
 
 
 def geocode_location_name_with_cache(
-    db: Session,
     location_name: str,
     country: str = "Kenya",
     limit: int = 1,
@@ -47,7 +44,6 @@ def geocode_location_name_with_cache(
         return []
 
     stored_location = get_stored_location(
-        db=db,
         location_name=clean_location_name,
         country=country,
     )
@@ -72,7 +68,6 @@ def geocode_location_name_with_cache(
 
     if geocoded_locations:
         create_stored_location(
-            db=db,
             location_name=clean_location_name,
             geocoded_location=geocoded_locations[0],
             country=country,

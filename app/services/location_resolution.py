@@ -2,18 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from sqlalchemy.orm import Session
-
-from app.data_sources.locations.kenya_county_coordinates import (
-    CountyCoordinate,
+from app.data_sources.locations import (
     find_county_coordinate,
-)
-from app.data_sources.locations.kenya_market_coordinates import (
-    LocationCoordinate,
     find_market_coordinate,
 )
-from app.models.stored_location import StoredLocation
-from app.services.stored_locations import get_stored_location
+from app.data_sources.locations.kenya_county_coordinates import CountyCoordinate
+from app.data_sources.locations.kenya_market_coordinates import LocationCoordinate
 
 
 @dataclass(frozen=True)
@@ -25,21 +19,6 @@ class ResolvedLocationCoordinate:
     location_type: str
     source_name: str
     is_verified: bool = False
-
-
-def stored_location_to_resolved_coordinate(
-    stored_location: StoredLocation,
-    location_type: str = "stored_location",
-) -> ResolvedLocationCoordinate:
-    return ResolvedLocationCoordinate(
-        name=stored_location.location_name,
-        country=stored_location.country,
-        latitude=stored_location.latitude,
-        longitude=stored_location.longitude,
-        location_type=location_type,
-        source_name=stored_location.source_name,
-        is_verified=stored_location.is_verified,
-    )
 
 
 def market_coordinate_to_resolved_coordinate(
@@ -73,32 +52,14 @@ def county_coordinate_to_resolved_coordinate(
 
 
 def resolve_market_coordinate(
-    db: Session,
     market_name: str,
     county: str | None = None,
     country: str = "Kenya",
-    prefer_verified_cache: bool = True,
 ) -> ResolvedLocationCoordinate | None:
     clean_market_name = market_name.strip()
 
     if not clean_market_name:
         return None
-
-    stored_location = get_stored_location(
-        db=db,
-        location_name=clean_market_name,
-        country=country,
-    )
-
-    if (
-        prefer_verified_cache
-        and stored_location is not None
-        and stored_location.is_verified
-    ):
-        return stored_location_to_resolved_coordinate(
-            stored_location=stored_location,
-            location_type="verified_cached_market",
-        )
 
     market_coordinate = find_market_coordinate(
         clean_market_name,
@@ -111,41 +72,17 @@ def resolve_market_coordinate(
             country=country,
         )
 
-    if stored_location is not None:
-        return stored_location_to_resolved_coordinate(
-            stored_location=stored_location,
-            location_type="cached_market",
-        )
-
     return None
 
 
 def resolve_county_coordinate(
-    db: Session,
     county: str,
     country: str = "Kenya",
-    prefer_verified_cache: bool = True,
 ) -> ResolvedLocationCoordinate | None:
     clean_county = county.strip()
 
     if not clean_county:
         return None
-
-    stored_location = get_stored_location(
-        db=db,
-        location_name=clean_county,
-        country=country,
-    )
-
-    if (
-        prefer_verified_cache
-        and stored_location is not None
-        and stored_location.is_verified
-    ):
-        return stored_location_to_resolved_coordinate(
-            stored_location=stored_location,
-            location_type="verified_cached_county",
-        )
 
     county_coordinate = find_county_coordinate(clean_county)
 
@@ -153,12 +90,6 @@ def resolve_county_coordinate(
         return county_coordinate_to_resolved_coordinate(
             county_coordinate=county_coordinate,
             country=country,
-        )
-
-    if stored_location is not None:
-        return stored_location_to_resolved_coordinate(
-            stored_location=stored_location,
-            location_type="cached_county",
         )
 
     return None

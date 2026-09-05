@@ -1,10 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import IntegrityError
 
 from app.core.exceptions import (
-    DataIntegrityError,
     ErrorDetail,
     SaratealError,
     ValidationError,
@@ -53,25 +51,6 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=validation_error.status_code,
             content=validation_error.to_response(),
-        )
-
-    @app.exception_handler(IntegrityError)
-    async def handle_database_integrity_error(
-        request: Request,
-        exc: IntegrityError,
-    ) -> JSONResponse:
-        integrity_error = DataIntegrityError(
-            message="Database integrity constraint failed.",
-            context={
-                "path": str(request.url.path),
-                "method": request.method,
-                "reason": "A duplicate, missing reference, or invalid database relationship was detected.",
-            },
-        )
-
-        return JSONResponse(
-            status_code=integrity_error.status_code,
-            content=integrity_error.to_response(),
         )
 
     @app.exception_handler(Exception)

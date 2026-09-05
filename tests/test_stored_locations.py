@@ -21,7 +21,7 @@ def test_normalize_location_name_returns_empty_string_for_blank_name():
     assert normalized_name == ""
 
 
-def test_create_stored_location_saves_location(db_session):
+def test_create_stored_location_saves_location():
     geocoded_location = GeocodedLocation(
         display_name="Wakulima Market, Nairobi, Kenya",
         latitude=-1.28333,
@@ -29,7 +29,6 @@ def test_create_stored_location_saves_location(db_session):
     )
 
     stored_location = create_stored_location(
-        db=db_session,
         location_name="Wakulima Market Nairobi",
         geocoded_location=geocoded_location,
         country="Kenya",
@@ -46,7 +45,7 @@ def test_create_stored_location_saves_location(db_session):
     assert stored_location.is_verified is False
 
 
-def test_get_stored_location_returns_matching_location(db_session):
+def test_get_stored_location_returns_matching_location():
     geocoded_location = GeocodedLocation(
         display_name="Kibuye Market, Kisumu, Kenya",
         latitude=-0.09170,
@@ -54,14 +53,12 @@ def test_get_stored_location_returns_matching_location(db_session):
     )
 
     create_stored_location(
-        db=db_session,
         location_name="Kibuye Market Kisumu",
         geocoded_location=geocoded_location,
         country="Kenya",
     )
 
     stored_location = get_stored_location(
-        db=db_session,
         location_name="  KIBUYE   market kisumu ",
         country="Kenya",
     )
@@ -72,9 +69,8 @@ def test_get_stored_location_returns_matching_location(db_session):
     assert stored_location.longitude == 34.76796
 
 
-def test_get_stored_location_returns_none_for_unknown_location(db_session):
+def test_get_stored_location_returns_none_for_unknown_location():
     stored_location = get_stored_location(
-        db=db_session,
         location_name="Unknown Market",
         country="Kenya",
     )
@@ -82,9 +78,8 @@ def test_get_stored_location_returns_none_for_unknown_location(db_session):
     assert stored_location is None
 
 
-def test_get_stored_location_by_id_returns_matching_location(db_session):
+def test_get_stored_location_by_id_returns_matching_location():
     created_location = create_stored_location(
-        db=db_session,
         location_name="Wakulima Market Nairobi",
         geocoded_location=GeocodedLocation(
             display_name="Wakulima Market, Nairobi, Kenya",
@@ -95,7 +90,6 @@ def test_get_stored_location_by_id_returns_matching_location(db_session):
     )
 
     stored_location = get_stored_location_by_id(
-        db=db_session,
         stored_location_id=created_location.id,
     )
 
@@ -104,18 +98,16 @@ def test_get_stored_location_by_id_returns_matching_location(db_session):
     assert stored_location.location_name == "Wakulima Market Nairobi"
 
 
-def test_get_stored_location_by_id_returns_none_for_unknown_id(db_session):
+def test_get_stored_location_by_id_returns_none_for_unknown_id():
     stored_location = get_stored_location_by_id(
-        db=db_session,
         stored_location_id=999999,
     )
 
     assert stored_location is None
 
 
-def test_set_stored_location_verification_updates_verified_status(db_session):
+def test_set_stored_location_verification_updates_verified_status():
     stored_location = create_stored_location(
-        db=db_session,
         location_name="Verified Market",
         geocoded_location=GeocodedLocation(
             display_name="Verified Market, Kenya",
@@ -127,7 +119,6 @@ def test_set_stored_location_verification_updates_verified_status(db_session):
     )
 
     updated_location = set_stored_location_verification(
-        db=db_session,
         stored_location_id=stored_location.id,
         is_verified=True,
     )
@@ -137,9 +128,8 @@ def test_set_stored_location_verification_updates_verified_status(db_session):
     assert updated_location.is_verified is True
 
 
-def test_set_stored_location_verification_returns_none_for_unknown_id(db_session):
+def test_set_stored_location_verification_returns_none_for_unknown_id():
     updated_location = set_stored_location_verification(
-        db=db_session,
         stored_location_id=999999,
         is_verified=True,
     )
@@ -147,9 +137,8 @@ def test_set_stored_location_verification_returns_none_for_unknown_id(db_session
     assert updated_location is None
 
 
-def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session):
+def test_list_stored_locations_returns_all_locations_ordered_by_name():
     create_stored_location(
-        db=db_session,
         location_name="Wakulima Market Nairobi",
         geocoded_location=GeocodedLocation(
             display_name="Wakulima Market, Nairobi, Kenya",
@@ -159,7 +148,6 @@ def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session)
         country="Kenya",
     )
     create_stored_location(
-        db=db_session,
         location_name="Kibuye Market Kisumu",
         geocoded_location=GeocodedLocation(
             display_name="Kibuye Market, Kisumu, Kenya",
@@ -169,7 +157,7 @@ def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session)
         country="Kenya",
     )
 
-    locations = list_stored_locations(db=db_session)
+    locations = list_stored_locations()
 
     assert [location.location_name for location in locations] == [
         "Kibuye Market Kisumu",
@@ -177,9 +165,8 @@ def test_list_stored_locations_returns_all_locations_ordered_by_name(db_session)
     ]
 
 
-def test_list_stored_locations_can_filter_by_country(db_session):
+def test_list_stored_locations_can_filter_by_country():
     create_stored_location(
-        db=db_session,
         location_name="Wakulima Market Nairobi",
         geocoded_location=GeocodedLocation(
             display_name="Wakulima Market, Nairobi, Kenya",
@@ -189,7 +176,6 @@ def test_list_stored_locations_can_filter_by_country(db_session):
         country="Kenya",
     )
     create_stored_location(
-        db=db_session,
         location_name="Kampala Central Market",
         geocoded_location=GeocodedLocation(
             display_name="Kampala Central Market, Uganda",
@@ -200,7 +186,6 @@ def test_list_stored_locations_can_filter_by_country(db_session):
     )
 
     locations = list_stored_locations(
-        db=db_session,
         country="Uganda",
     )
 
@@ -208,9 +193,8 @@ def test_list_stored_locations_can_filter_by_country(db_session):
     assert locations[0].location_name == "Kampala Central Market"
 
 
-def test_list_stored_locations_can_filter_by_verified_status(db_session):
+def test_list_stored_locations_can_filter_by_verified_status():
     create_stored_location(
-        db=db_session,
         location_name="Unverified Market",
         geocoded_location=GeocodedLocation(
             display_name="Unverified Market, Kenya",
@@ -221,7 +205,6 @@ def test_list_stored_locations_can_filter_by_verified_status(db_session):
         is_verified=False,
     )
     create_stored_location(
-        db=db_session,
         location_name="Verified Market",
         geocoded_location=GeocodedLocation(
             display_name="Verified Market, Kenya",
@@ -233,7 +216,6 @@ def test_list_stored_locations_can_filter_by_verified_status(db_session):
     )
 
     locations = list_stored_locations(
-        db=db_session,
         verified_only=True,
     )
 

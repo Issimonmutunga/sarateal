@@ -10,29 +10,43 @@
 
 ---
 
-Sarateal connects supply, demand, prices, tenders, weather signals, and location intelligence into a simple API-first system for agricultural market coordination.
+Sarateal is a **stateless, database-free** API for agricultural market
+coordination. Reference data (counties, products, markets with published
+coordinates) lives in memory; weather and geocoding signals are fetched live
+from external providers on demand. No Postgres, no SQLAlchemy — which keeps
+startup memory well under 512 MB.
 
-## Features
+No demo, simulated, or imputed records are served. Per the STMOI methodology,
+all observations (supply, demand, price) are recorded by real users in the
+frontend's IndexedDB; the API serves reference data and live signals only.
 
-- Farmer supply and buyer demand records
-- Market, product, county, tender, and match workflows
-- Price records and CSV price ingestion
-- Supply-demand match generation
-- Weather-risk signals from forecast data
-- Market and county weather lookup
-- Geocoding through Nominatim/OpenStreetMap
-- Cached and verified location coordinates
-- FastAPI backend with tested service layers
+## What the API serves
+
+- `GET /health` — status and version
+- `GET /counties` — Kenya county reference data, all 47 counties with published headquarters coordinates
+- `GET /products` — market product reference data
+- `GET /markets` — market names, counties, types, and coordinates
+- `GET /weather/forecast` — Open-Meteo risk signals for a coordinate
+- `GET /market-weather/forecast` — risk signals for a known market
+- `GET /county-weather/forecast` — risk signals for a known county
+- `GET /geocoding/search` — Nominatim/OpenStreetMap geocoding (in-memory cached)
+
+The API is read-only by design. All application data is stored in the browser
+via IndexedDB on the frontend.
 
 ## Installation
 
 ```bash
-git clone https://github.com/<your-org-or-user>/sarateal.git
-cd sarateal
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-````
+```
+
+For development/test tooling:
+
+```bash
+pip install -r requirements-dev.txt
+```
 
 ## Run the API
 
@@ -52,39 +66,26 @@ http://127.0.0.1:8000/docs
 pytest
 ```
 
-## Deployment command
+## Deployment
 
-For hosted environments, use:
+For hosted environments (Render), use:
 
 ```bash
 uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
-For local Windows testing, use:
+`render.yaml` expects only `APP_NAME` and `APP_VERSION` — no database connection
+string is needed.
 
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+## Licensing note
 
-## Example endpoints
-
-```text
-GET /health
-GET /markets
-GET /prices
-POST /price-ingestion/csv
-GET /weather/forecast
-GET /market-weather/forecast
-GET /county-weather/forecast
-GET /geocoding/search
-GET /stored-locations
-PATCH /stored-locations/{stored_location_id}/verification
-```
+The `dashboard/` directory is a legacy Streamlit app that depended on the
+previous database layer. It is no longer wired into the API or the dependency
+list, and it is not needed to run Sarateal.
 
 ## Data sources
 
 Sarateal currently integrates with:
 
-* [Open-Meteo](https://open-meteo.com/) for weather forecast data.
-* [Nominatim/OpenStreetMap](https://operations.osmfoundation.org/policies/nominatim/) for geocoding, used through a cache-aware adapter with a custom User-Agent.
-
+- [Open-Meteo](https://open-meteo.com/) for weather forecast data.
+- [Nominatim/OpenStreetMap](https://operations.osmfoundation.org/policies/nominatim/) for geocoding, used through a cache-aware adapter with a custom User-Agent.

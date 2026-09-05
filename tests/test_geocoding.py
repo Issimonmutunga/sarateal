@@ -104,11 +104,8 @@ def test_geocode_location_name_allows_custom_country_limit_and_user_agent(
     assert locations == expected_locations
 
 
-def test_geocode_location_name_with_cache_returns_empty_list_for_blank_name(
-    db_session,
-):
+def test_geocode_location_name_with_cache_returns_empty_list_for_blank_name():
     locations = geocode_location_name_with_cache(
-        db=db_session,
         location_name="   ",
     )
 
@@ -116,11 +113,9 @@ def test_geocode_location_name_with_cache_returns_empty_list_for_blank_name(
 
 
 def test_geocode_location_name_with_cache_returns_cached_location_without_fetching(
-    db_session,
     monkeypatch,
 ):
     create_stored_location(
-        db=db_session,
         location_name="Wakulima Market Nairobi",
         geocoded_location=GeocodedLocation(
             display_name="Wakulima Market, Nairobi, Kenya",
@@ -144,7 +139,6 @@ def test_geocode_location_name_with_cache_returns_cached_location_without_fetchi
     )
 
     locations = geocode_location_name_with_cache(
-        db=db_session,
         location_name="  WAKULIMA   market nairobi ",
         country="Kenya",
     )
@@ -159,7 +153,6 @@ def test_geocode_location_name_with_cache_returns_cached_location_without_fetchi
 
 
 def test_geocode_location_name_with_cache_fetches_and_saves_on_cache_miss(
-    db_session,
     monkeypatch,
 ):
     captured_call = {}
@@ -191,7 +184,6 @@ def test_geocode_location_name_with_cache_fetches_and_saves_on_cache_miss(
     )
 
     locations = geocode_location_name_with_cache(
-        db=db_session,
         location_name="  Kibuye Market Kisumu  ",
         country="Kenya",
         limit=1,
@@ -199,7 +191,6 @@ def test_geocode_location_name_with_cache_fetches_and_saves_on_cache_miss(
     )
 
     stored_location = get_stored_location(
-        db=db_session,
         location_name="kibuye market kisumu",
         country="Kenya",
     )
@@ -218,7 +209,6 @@ def test_geocode_location_name_with_cache_fetches_and_saves_on_cache_miss(
 
 
 def test_geocode_location_name_with_cache_does_not_save_when_fetch_returns_empty(
-    db_session,
     monkeypatch,
 ):
     def fake_fetch_nominatim_location(
@@ -235,13 +225,11 @@ def test_geocode_location_name_with_cache_does_not_save_when_fetch_returns_empty
     )
 
     locations = geocode_location_name_with_cache(
-        db=db_session,
         location_name="Unknown Market",
         country="Kenya",
     )
 
     stored_location = get_stored_location(
-        db=db_session,
         location_name="Unknown Market",
         country="Kenya",
     )
