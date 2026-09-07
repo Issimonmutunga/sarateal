@@ -1,8 +1,6 @@
 <p align="center">
-  <span style="font-size: 2.2rem; font-weight: 800; color: #2f5c52;">Sarateal</span>
+  <img src="docs/assets/sarateal-logo.svg" alt="Sarateal logo" width="280" />
 </p>
-
-<h1 align="center">Sarateal</h1>
 
 <p align="center">
   Farmer market access and food supply intelligence.
