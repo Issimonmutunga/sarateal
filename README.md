@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/sarateal-logo.svg" alt="Sarateal logo" width="280" />
+  <img src="docs/assets/sarateal-logo.png" alt="Sarateal logo" width="220" />
 </p>
 
 <p align="center">
