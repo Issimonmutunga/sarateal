@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/sarateal-icon.svg" alt="Sarateal icon" width="96" />
+  <span style="font-size: 2.2rem; font-weight: 800; color: #2f5c52;">Sarateal</span>
 </p>
 
 <h1 align="center">Sarateal</h1>
